@@ -39,7 +39,7 @@ export class PostsController {
     return this.postsService.getPost(id);
   }
 
-  @Get('/user/:userId')
+  @Get('user/:userId')
   getAll(@Param('userId') userId: string) {
     return this.postsService.getAllPostsByUser(userId);
   }

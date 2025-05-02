@@ -93,7 +93,7 @@ export class PostsService {
       return post;
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error fetching posts: ', error.message);
+        console.error('Error fetching post: ', error.message);
         throw new Error(error.message);
       }
     }
@@ -134,7 +134,9 @@ export class PostsService {
         title,
         text,
         authorId,
+        likes: [],
         likesCount: 0,
+        dislikes: [],
         dislikesCount: 0,
         commentsCount: 0,
         createdAt: admin.firestore.Timestamp.now(),
@@ -178,7 +180,7 @@ export class PostsService {
       return updatedPostSnap.data() as Post;
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error creating new post: ', error.message);
+        console.error('Error updating post: ', error.message);
         throw new Error(error.message);
       }
     }
@@ -192,7 +194,7 @@ export class PostsService {
       return { message: 'Your post deleted successfully' };
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error creating new post: ', error.message);
+        console.error('Error deleting post: ', error.message);
         throw new Error(error.message);
       }
     }

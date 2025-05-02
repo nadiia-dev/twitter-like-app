@@ -6,6 +6,7 @@ import { PostsModule } from './posts/posts.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { InteractionsModule } from './interactions/interactions.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { InteractionsModule } from './interactions/interactions.module';
     UsersModule,
     PostsModule,
     InteractionsModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
