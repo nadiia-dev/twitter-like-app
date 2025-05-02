@@ -13,6 +13,7 @@ export class FirebaseService {
       ) as admin.ServiceAccount;
       this.fireApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
+        storageBucket: `gs://${serviceAccount.projectId}.firebasestorage.app`,
       });
     } else {
       this.fireApp = admin.app();

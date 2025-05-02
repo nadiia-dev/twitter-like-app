@@ -10,7 +10,9 @@ export interface Post {
   text: string;
   authorId: string;
   imageUrl?: string;
+  likes: string[];
   likesCount: number;
+  dislikes: string[];
   dislikesCount: number;
   commentsCount: number;
   createdAt?: admin.firestore.Timestamp;

@@ -54,8 +54,6 @@ export class UsersService {
     }
   }
 
-  async googleAuth() {}
-
   async updateUser(
     id: string,
     user: UpdateUserDto,

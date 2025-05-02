@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString, IsUrl, Min } from 'class-validator';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreatePostDto {
   @IsString()
@@ -13,19 +13,4 @@ export class CreatePostDto {
   @IsUrl({}, { message: 'Image URL must be a valid URL' })
   @IsOptional()
   imageUrl: string;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  likesCount?: number = 0;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  dislikesCount?: number = 0;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  commentsCount?: number = 0;
 }

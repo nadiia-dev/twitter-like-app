@@ -5,6 +5,7 @@ import { FirebaseModule } from './firebase/firebase.module';
 import { PostsModule } from './posts/posts.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
+import { InteractionsModule } from './interactions/interactions.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UsersModule } from './users/users.module';
     FirebaseModule,
     UsersModule,
     PostsModule,
+    InteractionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
