@@ -5,13 +5,13 @@ import { UserRecord } from 'firebase-admin/auth';
 import * as admin from 'firebase-admin';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
-type UserProfile = {
+export interface UserProfile {
   email: string;
   name: string;
   photoURL?: string;
   createdAt: admin.firestore.Timestamp;
   updatedAt: admin.firestore.Timestamp;
-};
+}
 
 @Injectable()
 export class UsersService {
@@ -53,6 +53,8 @@ export class UsersService {
       }
     }
   }
+
+  async googleAuth() {}
 
   async updateUser(
     id: string,
