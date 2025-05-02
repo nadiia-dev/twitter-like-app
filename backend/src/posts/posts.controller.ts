@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/createPost.dto';
@@ -14,6 +15,24 @@ import { UpdatePostDto } from './dto/updatePost.dto';
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
+
+  @Get()
+  getAllPosts(
+    @Query('sortBy') sortParam: 'likesCount' | 'commentsCount',
+    @Query('limit') limitRaw: string,
+    @Query('lastValue') lastValueRaw: string,
+    @Query('lastCreated') lastCreated: string,
+  ) {
+    const limit = parseInt(limitRaw, 10) || 10;
+    const lastValue = lastValueRaw ? parseInt(lastValueRaw, 10) : undefined;
+
+    return this.postsService.getAllPosts(
+      sortParam,
+      limit,
+      lastValue,
+      lastCreated,
+    );
+  }
 
   @Get(':id')
   getOnePost(@Param('id') id: string) {

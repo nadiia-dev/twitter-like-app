@@ -21,6 +21,60 @@ export interface Post {
 export class PostsService {
   constructor(private readonly firebaseService: FirebaseService) {}
 
+  async getAllPosts(
+    sortParam: string,
+    limit: number,
+    lastValue?: number,
+    lastCreated?: string,
+  ): Promise<Post[] | undefined> {
+    const firestore = this.firebaseService.getFirestore();
+    const postsRef = firestore.collection('posts');
+    const allowedSortFields = ['likesCount', 'commentsCount'];
+    const sortBy = allowedSortFields.includes(sortParam)
+      ? sortParam
+      : 'likesCount';
+    const pageSize = Number(limit) || 10;
+
+    try {
+      let postsQuery = postsRef
+        .orderBy(sortBy, 'desc')
+        .orderBy('createdAt', 'desc');
+
+      if (lastValue && lastCreated) {
+        const lastCreatedDate = new Date(lastCreated);
+        if (isNaN(lastCreatedDate.getTime())) {
+          throw new HttpException('Invalid lastCreated date.', 400);
+        }
+        postsQuery = postsQuery.startAfter(
+          Number(lastValue),
+          admin.firestore.Timestamp.fromDate(new Date(lastCreated)),
+        );
+      }
+
+      postsQuery = postsQuery.limit(pageSize);
+
+      const snapshot = await postsQuery.get();
+
+      if (snapshot.empty) {
+        throw new HttpException('No posts found.', 404);
+      }
+      const posts: Post[] = snapshot.docs.map((doc): Post => {
+        const data = doc.data() as Omit<Post, 'id'>;
+        return {
+          id: doc.id,
+          ...data,
+        };
+      });
+
+      return posts;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error fetching posts: ', error.message);
+        throw new Error(error.message);
+      }
+    }
+  }
+
   async getPost(id: string): Promise<Post | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
