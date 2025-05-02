@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { CreatePostDto } from './dto/createPost.dto';
 import * as admin from 'firebase-admin';
@@ -21,6 +21,28 @@ export interface Post {
 export class PostsService {
   constructor(private readonly firebaseService: FirebaseService) {}
 
+  async getPost(id: string): Promise<Post | undefined> {
+    const firestore = this.firebaseService.getFirestore();
+    const postsRef = firestore.collection('posts');
+    try {
+      const postDoc = await postsRef.doc(id).get();
+
+      if (!postDoc.exists) {
+        throw new HttpException('Post not found.', 404);
+      }
+      const post = {
+        id: postDoc.id,
+        ...postDoc.data(),
+      } as Post;
+      return post;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error fetching posts: ', error.message);
+        throw new Error(error.message);
+      }
+    }
+  }
+
   async getAllPostsByUser(userId: string): Promise<Post[] | undefined> {
     try {
       const firestore = this.firebaseService.getFirestore();
@@ -28,7 +50,7 @@ export class PostsService {
       const snapshot = await postsRef.where('authorId', '==', userId).get();
 
       if (snapshot.empty) {
-        console.log('No posts found.');
+        throw new HttpException('No posts found.', 404);
       }
       const posts: Post[] = snapshot.docs.map((doc): Post => {
         const data = doc.data() as Omit<Post, 'id'>;

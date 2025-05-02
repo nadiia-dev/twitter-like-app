@@ -15,7 +15,12 @@ import { UpdatePostDto } from './dto/updatePost.dto';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Get(':userId')
+  @Get(':id')
+  getOnePost(@Param('id') id: string) {
+    return this.postsService.getPost(id);
+  }
+
+  @Get('/user/:userId')
   getAll(@Param('userId') userId: string) {
     return this.postsService.getAllPostsByUser(userId);
   }
