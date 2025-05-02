@@ -3,6 +3,7 @@ import { FirebaseService } from 'src/firebase/firebase.service';
 import { CreatePostDto } from './dto/createPost.dto';
 import * as admin from 'firebase-admin';
 import { UpdatePostDto } from './dto/updatePost.dto';
+import { Comment } from 'src/comments/comments.service';
 
 export interface Post {
   id: string;
@@ -17,6 +18,11 @@ export interface Post {
   commentsCount: number;
   createdAt?: admin.firestore.Timestamp;
   updatedAt?: admin.firestore.Timestamp;
+}
+
+interface PostWithComments {
+  post: Post;
+  comments: Comment[];
 }
 
 @Injectable()
@@ -77,7 +83,7 @@ export class PostsService {
     }
   }
 
-  async getPost(id: string): Promise<Post | undefined> {
+  async getPost(id: string): Promise<PostWithComments | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
     try {
@@ -86,11 +92,25 @@ export class PostsService {
       if (!postDoc.exists) {
         throw new HttpException('Post not found.', 404);
       }
+
+      const commentsSnapshot = await firestore
+        .collection('comments')
+        .where('postId', '==', id)
+        .orderBy('createdAt', 'asc')
+        .get();
+
+      const comments = commentsSnapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        } as Comment;
+      });
+
       const post = {
         id: postDoc.id,
         ...postDoc.data(),
       } as Post;
-      return post;
+      return { post, comments };
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error fetching post: ', error.message);
@@ -108,6 +128,7 @@ export class PostsService {
       if (snapshot.empty) {
         throw new HttpException('No posts found.', 404);
       }
+
       const posts: Post[] = snapshot.docs.map((doc): Post => {
         const data = doc.data() as Omit<Post, 'id'>;
         return {
