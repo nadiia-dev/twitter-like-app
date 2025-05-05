@@ -1,14 +1,16 @@
 import { instance } from "./apiInstance";
 import {
+  deleteUser,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { auth, provider } from "../firebase/config";
+import { auth, fireDb, provider } from "../firebase/config";
+import { doc, getDoc } from "firebase/firestore";
 
-export const registerUser = async (userData: {
+export const registerUserAPI = async (userData: {
   name: string;
   email: string;
   password: string;
@@ -35,14 +37,21 @@ export const registerUser = async (userData: {
   }
 };
 
-export const loginUser = async (userData: {
+export const loginUserAPI = async (userData: {
   email: string;
   password: string;
 }) => {
   const { email, password } = userData;
   try {
     const res = await signInWithEmailAndPassword(auth, email, password);
-    return res;
+    const { user } = res;
+    const userDocRef = doc(fireDb, "users", user.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      return userDoc.data();
+    } else {
+      throw new Error("User not found in database");
+    }
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
@@ -50,11 +59,17 @@ export const loginUser = async (userData: {
   }
 };
 
-export const loginWithGoogle = async () => {
+export const loginWithGoogleAPI = async () => {
   try {
     const res = await signInWithPopup(auth, provider);
-    const user = res.user;
-    return user;
+    const { user } = res;
+    const userDocRef = doc(fireDb, "users", user.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      return userDoc.data();
+    } else {
+      throw new Error("User not found in database");
+    }
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
@@ -62,7 +77,7 @@ export const loginWithGoogle = async () => {
   }
 };
 
-export const logoutUser = async () => {
+export const logoutAPI = async () => {
   try {
     await signOut(auth);
     return { message: "Sign-out successful." };
@@ -77,6 +92,20 @@ export const resetUserPassword = async (email: string) => {
   try {
     await sendPasswordResetEmail(auth, email);
     return { message: "Password reset email sent!" };
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};
+
+export const deleteUserAPI = async () => {
+  const user = auth.currentUser;
+  try {
+    if (user) {
+      await deleteUser(user);
+      console.log("User Deleted.");
+    }
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
