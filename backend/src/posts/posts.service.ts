@@ -20,7 +20,7 @@ export interface Post {
   updatedAt?: admin.firestore.Timestamp;
 }
 
-interface PostWithComments {
+export interface PostWithComments {
   post: Post;
   comments: Comment[];
 }
