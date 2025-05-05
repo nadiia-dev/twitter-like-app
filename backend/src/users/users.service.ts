@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { CreateUserDto } from './dto/createUser.dto';
-import { UserRecord } from 'firebase-admin/auth';
 import * as admin from 'firebase-admin';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
@@ -17,7 +16,9 @@ export interface UserProfile {
 export class UsersService {
   constructor(private readonly firebaseService: FirebaseService) {}
 
-  async createUser(user: CreateUserDto): Promise<UserRecord | undefined> {
+  async createUser(
+    user: CreateUserDto,
+  ): Promise<{ uid: string; email: string } | undefined> {
     const { name, email, password } = user;
     const service = this.firebaseService.getAdmin();
     const firestore = this.firebaseService.getFirestore();
@@ -46,7 +47,7 @@ export class UsersService {
         createdAt: admin.firestore.Timestamp.now(),
       });
 
-      return createdAuth;
+      return { uid, email };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

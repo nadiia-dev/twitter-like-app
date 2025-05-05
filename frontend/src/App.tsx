@@ -1,17 +1,13 @@
 // import { useEffect } from "react";
-// import { loginUser } from "./api/authApi";
 import { Button } from "./components/ui/button";
-// import { registerUser } from "./api/authApi";
+// import { resetUserPassword } from "./api/authApi";
 
 function App() {
   // useEffect(() => {
   //   async function func() {
   //     try {
-  //       const user = await loginUser({
-  //         email: "n.pavljuchenko@gmail.com",
-  //         password: "qwerty",
-  //       });
-  //       console.log("User login:", user);
+  //       const user = await resetUserPassword("n.pavljuchenko@gmail.com");
+  //       console.log(user);
   //     } catch (err) {
   //       console.log(err);
   //     }

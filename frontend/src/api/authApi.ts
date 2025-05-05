@@ -1,5 +1,7 @@
 import { instance } from "./apiInstance";
 import {
+  sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -12,9 +14,20 @@ export const registerUser = async (userData: {
   password: string;
 }) => {
   try {
-    const res = await instance.post("/users/signup", userData);
+    await instance.post("/users/signup", userData);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      userData.email,
+      userData.password
+    );
 
-    return res.data;
+    const user = userCredential.user;
+
+    if (!user.emailVerified) {
+      await sendEmailVerification(user);
+    }
+
+    return user;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
@@ -53,6 +66,17 @@ export const logoutUser = async () => {
   try {
     await signOut(auth);
     return { message: "Sign-out successful." };
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};
+
+export const resetUserPassword = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { message: "Password reset email sent!" };
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
