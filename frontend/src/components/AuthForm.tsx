@@ -61,7 +61,7 @@ const AuthForm = () => {
     const { email, password, name } = values;
     if (isLogin) {
       dispatch(loginUser({ email, password }));
-      navigate("/dashboard");
+      navigate("/feed");
     } else {
       dispatch(registerUser({ name: name ? name : "", email, password }));
       toast.success("Registered successfuly!");

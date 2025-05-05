@@ -3,6 +3,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotVerified from "./pages/NotVerified";
+import Feed from "./pages/Feed";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 function App() {
   const router = createBrowserRouter([
@@ -16,15 +19,31 @@ function App() {
         },
         {
           path: "/login",
-          element: <Login />,
+          element: (
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          ),
         },
         {
           path: "/register",
-          element: <Register />,
+          element: (
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          ),
         },
         {
           path: "/not-verified",
           element: <NotVerified />,
+        },
+        {
+          path: "/feed",
+          element: (
+            <ProtectedRoute>
+              <Feed />
+            </ProtectedRoute>
+          ),
         },
       ],
     },
