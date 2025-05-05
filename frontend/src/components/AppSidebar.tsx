@@ -48,7 +48,6 @@ const AppSidebar = () => {
   const { user, logoutUser } = useAuth();
 
   const handleLogout = async () => {
-    console.log("click");
     try {
       await logoutUser();
     } catch (e) {

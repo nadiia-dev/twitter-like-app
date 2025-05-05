@@ -16,7 +16,11 @@ function App() {
       children: [
         {
           index: true,
-          element: <Home />,
+          element: (
+            <PublicRoute>
+              <Home />
+            </PublicRoute>
+          ),
         },
         {
           path: "/login",

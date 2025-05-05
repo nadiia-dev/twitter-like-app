@@ -4,7 +4,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        orbitron: ["Orbitron", "sans-serif"],
+        Orbitron: ["Orbitron", "sans-serif"],
       },
     },
   },
