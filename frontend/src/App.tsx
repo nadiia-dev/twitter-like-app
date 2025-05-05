@@ -1,11 +1,26 @@
-import { Button } from "./components/ui/button";
+import Auth from "./pages/Auth";
+import Home from "./pages/Home";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 function App() {
-  return (
-    <div className="text-red-50">
-      <Button>Click me</Button>
-    </div>
-  );
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      id: "root",
+      children: [
+        {
+          index: true,
+          element: <Home />,
+        },
+        {
+          path: "/auth",
+          element: <Auth />,
+        },
+      ],
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;
