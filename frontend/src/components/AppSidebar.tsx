@@ -45,7 +45,19 @@ const items = [
 ];
 
 const AppSidebar = () => {
-  const { user } = useAuth();
+  const { user, logoutUser } = useAuth();
+
+  const handleLogout = async () => {
+    console.log("click");
+    try {
+      await logoutUser();
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e.message);
+      }
+    }
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="m-4 border-b flex flex-row gap-2">
@@ -90,11 +102,9 @@ const AppSidebar = () => {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem>
-                  <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Logout</span>
+                <DropdownMenuItem>Account</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
