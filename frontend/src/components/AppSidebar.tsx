@@ -14,6 +14,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "./ui/sidebar";
 import {
   ChevronUp,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/authContext";
 import { Avatar, AvatarImage } from "./ui/avatar";
+import { Link } from "react-router-dom";
 
 const items = [
   {
@@ -46,6 +48,7 @@ const items = [
 
 const AppSidebar = () => {
   const { user, logoutUser } = useAuth();
+  const { isMobile } = useSidebar();
 
   const handleLogout = async () => {
     try {
@@ -59,8 +62,19 @@ const AppSidebar = () => {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="m-4 border-b flex flex-row gap-2">
-        <Origami />
+      <SidebarHeader className="border-b flex gap-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Origami />
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -69,10 +83,10 @@ const AppSidebar = () => {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
+                    <Link to={item.url}>
+                      <item.icon className="size-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -85,21 +99,31 @@ const AppSidebar = () => {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                >
                   {user?.photoURL ? (
-                    <Avatar>
+                    <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage src={user?.photoURL} alt="user avatar" />
                     </Avatar>
                   ) : (
                     <User2 />
                   )}
-                  {user?.displayName}
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {user?.displayName}
+                    </span>
+                    <span className="truncate text-xs">{user?.email}</span>
+                  </div>
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                side={isMobile ? "bottom" : "right"}
+                align="end"
+                sideOffset={4}
               >
                 <DropdownMenuItem>Account</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
