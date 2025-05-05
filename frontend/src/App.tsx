@@ -7,6 +7,7 @@ import Feed from "./pages/Feed";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./context/authContext";
+import SettingsPage from "./pages/Settings";
 
 function App() {
   const router = createBrowserRouter([
@@ -47,6 +48,14 @@ function App() {
           element: (
             <ProtectedRoute>
               <Feed />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/settings",
+          element: (
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           ),
         },

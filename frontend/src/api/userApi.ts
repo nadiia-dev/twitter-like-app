@@ -96,7 +96,7 @@ export const deleteUserAPI = async () => {
   try {
     if (user) {
       await deleteUser(user);
-      console.log("User Deleted.");
+      return { message: "User Deleted." };
     }
   } catch (e) {
     if (e instanceof Error) {

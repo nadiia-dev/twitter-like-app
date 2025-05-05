@@ -1,4 +1,5 @@
 import {
+  deleteUserAPI,
   loginUserAPI,
   loginWithGoogleAPI,
   logoutAPI,
@@ -25,6 +26,7 @@ interface AuthContextType {
   }) => Promise<User | undefined>;
   loginWithGoogle: () => Promise<User | undefined>;
   logoutUser: () => Promise<void>;
+  deleteProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -114,6 +116,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const deleteProfile = async () => {
+    setLoading(true);
+    try {
+      const res = await deleteUserAPI();
+      if (res) {
+        setUser(null);
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(e.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext
       value={{
@@ -125,6 +143,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         loginWithGoogle,
         logoutUser,
+        deleteProfile,
       }}
     >
       {children}
