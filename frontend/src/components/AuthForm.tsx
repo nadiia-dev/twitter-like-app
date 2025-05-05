@@ -25,6 +25,8 @@ import { loginUser, registerUser } from "@/redux/user/actions";
 import { AppDispatch } from "@/redux/store";
 import { toast } from "react-toastify";
 import GoogleAuthButton from "./GoogleAuthButton";
+import ForgotPasswordModal from "./ForgotPasswordModal";
+import { useState } from "react";
 
 const validationSchema = z.object({
   name: z.string().min(2).optional(),
@@ -33,6 +35,7 @@ const validationSchema = z.object({
 });
 
 const AuthForm = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -126,10 +129,20 @@ const AuthForm = () => {
                         {...field}
                       />
                     </FormControl>
+                    {isLogin && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        onClick={() => setIsDialogOpen(true)}
+                      >
+                        Forgot password?
+                      </Button>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <Button type="submit">{isLogin ? "Login" : "Register"}</Button>
             </form>
           </Form>
@@ -147,6 +160,12 @@ const AuthForm = () => {
       </Card>
       <div>or</div>
       <GoogleAuthButton />
+      {isLogin && (
+        <ForgotPasswordModal
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+        />
+      )}
     </>
   );
 };
