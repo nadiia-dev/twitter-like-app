@@ -17,18 +17,25 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useDispatch } from "react-redux";
+import { loginUser, registerUser } from "@/redux/user/actions";
+import { AppDispatch } from "@/redux/store";
+import { toast } from "react-toastify";
 
 const validationSchema = z.object({
-  name: z.string().min(2),
+  name: z.string().min(2).optional(),
   email: z.string().email(),
   password: z.string(),
 });
 
 const AuthForm = () => {
-  const { pathname } = useLocation();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
   const isLogin = pathname === "/login" ? true : false;
   const defaultValues = isLogin
     ? {
@@ -46,7 +53,17 @@ const AuthForm = () => {
     defaultValues,
   });
 
-  const onSubmit = () => {};
+  const onSubmit = (values: z.infer<typeof validationSchema>) => {
+    const { email, password, name } = values;
+    if (isLogin) {
+      dispatch(loginUser({ email, password }));
+      navigate("/dashboard");
+    } else {
+      dispatch(registerUser({ name: name ? name : "", email, password }));
+      toast.success("Registered successfuly!");
+      navigate("/not-verified");
+    }
+  };
 
   return (
     <>
@@ -63,7 +80,7 @@ const AuthForm = () => {
               className="flex flex-col gap-4"
               onSubmit={form.handleSubmit(onSubmit)}
             >
-              {isLogin && (
+              {!isLogin && (
                 <FormField
                   control={form.control}
                   name="name"
@@ -71,7 +88,7 @@ const AuthForm = () => {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="john doe" type="name" {...field} />
+                        <Input placeholder="john" type="name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
