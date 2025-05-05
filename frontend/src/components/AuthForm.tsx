@@ -24,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { loginUser, registerUser } from "@/redux/user/actions";
 import { AppDispatch } from "@/redux/store";
 import { toast } from "react-toastify";
+import GoogleAuthButton from "./GoogleAuthButton";
 
 const validationSchema = z.object({
   name: z.string().min(2).optional(),
@@ -144,6 +145,8 @@ const AuthForm = () => {
           </Button>
         </CardFooter>
       </Card>
+      <div>or</div>
+      <GoogleAuthButton />
     </>
   );
 };
