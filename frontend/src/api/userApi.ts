@@ -7,8 +7,7 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { auth, fireDb, provider } from "../firebase/config";
-import { doc, getDoc } from "firebase/firestore";
+import { auth, provider } from "../firebase/config";
 
 export const registerUserAPI = async (userData: {
   name: string;
@@ -43,15 +42,14 @@ export const loginUserAPI = async (userData: {
 }) => {
   const { email, password } = userData;
   try {
-    const res = await signInWithEmailAndPassword(auth, email, password);
-    const { user } = res;
-    const userDocRef = doc(fireDb, "users", user.uid);
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      return userDoc.data();
-    } else {
-      throw new Error("User not found in database");
-    }
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const user = userCredential.user;
+    return user;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
@@ -63,13 +61,7 @@ export const loginWithGoogleAPI = async () => {
   try {
     const res = await signInWithPopup(auth, provider);
     const { user } = res;
-    const userDocRef = doc(fireDb, "users", user.uid);
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      return userDoc.data();
-    } else {
-      throw new Error("User not found in database");
-    }
+    return user;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

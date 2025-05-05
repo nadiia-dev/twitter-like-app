@@ -1,27 +1,20 @@
-import { useState } from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { loginWithGoogle } from "@/redux/user/actions";
-import { AppDispatch } from "@/redux/store";
+import { useAuth } from "@/context/authContext";
 
 const GoogleAuthButton = () => {
-  const [loading, setLoading] = useState(false);
+  const { loading, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
 
   const handleGoogleLogin = async () => {
     try {
-      setLoading(true);
-      const resultAction = await dispatch(loginWithGoogle());
+      const resultAction = await loginWithGoogle();
 
-      if (loginWithGoogle.fulfilled.match(resultAction)) {
-        navigate("/dashboard");
+      if (resultAction) {
+        navigate("/feed");
       }
     } catch (err) {
       console.error("Google auth failed:", err);
-    } finally {
-      setLoading(false);
     }
   };
 

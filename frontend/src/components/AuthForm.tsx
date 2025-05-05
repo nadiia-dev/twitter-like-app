@@ -20,13 +20,11 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useDispatch } from "react-redux";
-import { loginUser, registerUser } from "@/redux/user/actions";
-import { AppDispatch } from "@/redux/store";
 import { toast } from "react-toastify";
 import GoogleAuthButton from "./GoogleAuthButton";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import { useState } from "react";
+import { useAuth } from "../context/authContext";
 
 const validationSchema = z.object({
   name: z.string().min(2).optional(),
@@ -36,7 +34,7 @@ const validationSchema = z.object({
 
 const AuthForm = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
+  const { register, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
@@ -57,13 +55,13 @@ const AuthForm = () => {
     defaultValues,
   });
 
-  const onSubmit = (values: z.infer<typeof validationSchema>) => {
+  const onSubmit = async (values: z.infer<typeof validationSchema>) => {
     const { email, password, name } = values;
     if (isLogin) {
-      dispatch(loginUser({ email, password }));
+      await login({ email, password });
       navigate("/feed");
     } else {
-      dispatch(registerUser({ name: name ? name : "", email, password }));
+      await register({ name: name ? name : "", email, password });
       toast.success("Registered successfuly!");
       navigate("/not-verified");
     }

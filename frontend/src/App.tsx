@@ -6,6 +6,7 @@ import NotVerified from "./pages/NotVerified";
 import Feed from "./pages/Feed";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
+import { AuthProvider } from "./context/authContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -49,7 +50,11 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 export default App;
