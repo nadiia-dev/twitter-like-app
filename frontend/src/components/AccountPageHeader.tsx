@@ -1,19 +1,13 @@
-import { getUserAPI } from "@/api/userApi";
-import { useQuery } from "@tanstack/react-query";
 import { auth } from "@/firebase/config";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
+import { User } from "@/types/User";
+import { Button } from "./ui/button";
 
-const AccountPageHeader = ({ userId }: { userId: string }) => {
+const AccountPageHeader = ({ userData }: { userData: User }) => {
   const curUser = auth.currentUser;
-  const isCurrentUser = curUser?.uid === userId;
-  const { data: userData, isLoading } = useQuery({
-    queryKey: ["getUser", userId],
-    queryFn: () => getUserAPI(userId!),
-  });
-
-  if (isLoading) return <p>Loading...</p>;
+  const isCurrentUser = curUser?.uid === userData.id;
 
   return (
     <div className="w-full">
@@ -42,6 +36,11 @@ const AccountPageHeader = ({ userId }: { userId: string }) => {
           </div>
         </>
       )}
+      <div className="text-center">
+        <Button variant="default" className="inline-block w-30">
+          Add post
+        </Button>
+      </div>
     </div>
   );
 };

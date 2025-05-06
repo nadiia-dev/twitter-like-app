@@ -6,8 +6,8 @@ export interface UserProfile {
 }
 
 export interface User {
-  uid: string;
+  id: string;
   name: string;
   email: string;
-  photoUrl?: string;
+  photoURL?: string;
 }

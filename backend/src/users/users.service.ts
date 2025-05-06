@@ -5,6 +5,7 @@ import * as admin from 'firebase-admin';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
 export interface UserProfile {
+  id: string;
   email: string;
   name: string;
   photoURL?: string;
@@ -97,8 +98,11 @@ export class UsersService {
       if (!userSnap) {
         throw new BadRequestException('Can`t get user by id');
       }
-
-      return userSnap.data() as UserProfile;
+      const userData = userSnap.data() as UserProfile;
+      return {
+        ...userData,
+        id: userSnap.id,
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

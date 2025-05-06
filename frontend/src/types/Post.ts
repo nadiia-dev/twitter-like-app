@@ -4,4 +4,15 @@ export interface Post {
   text: string;
   imageURL: string;
   authorId: string;
+  createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+  updatedAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+  commentsCount: number;
+  likesCount: number;
+  dislikesCount: number;
 }
