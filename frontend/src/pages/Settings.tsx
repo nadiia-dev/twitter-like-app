@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
+import { handleFileChange } from "@/lib/handleFileChange";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Settings } from "lucide-react";
@@ -73,7 +74,7 @@ const SettingsPage = () => {
   const defaultValues = {
     name: user?.displayName || "",
     email: user?.email || "",
-    photoURL: user?.photoURL || "",
+    photoURL: user?.photoURL || "https://placehold.co/400x400",
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -130,6 +131,17 @@ const SettingsPage = () => {
     }
   };
 
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const newUrl = await handleFileChange(e);
+      form.setValue("photoURL", newUrl);
+    } catch (e) {
+      if (e instanceof Error) {
+        toast.error(e.message);
+      }
+    }
+  };
+
   return (
     <RootLayout>
       <div className="p-4">
@@ -148,16 +160,19 @@ const SettingsPage = () => {
                   {/* Avatar block */}
                   <div className="flex flex-col gap-4 md:w-1/3">
                     <Avatar className="h-20 w-20 rounded-lg overflow-hidden">
-                      <AvatarImage
-                        src={user?.photoURL || "https://placehold.co/400x400"}
-                        alt="user avatar"
-                      />
+                      {form.watch("photoURL") && (
+                        <AvatarImage
+                          src={form.watch("photoURL")}
+                          alt="user avatar"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                     </Avatar>
                     <div>
                       <Label htmlFor="picture" className="mb-2">
                         Avatar
                       </Label>
-                      <Input id="picture" type="file" name="photoURL" />
+                      <Input id="picture" type="file" onChange={handleChange} />
                     </div>
                   </div>
 
