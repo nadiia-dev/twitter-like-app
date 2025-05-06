@@ -15,19 +15,20 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { reauthenticateUserAPI } from "@/api/userApi";
 import { auth } from "@/firebase/config";
+import { toast } from "react-toastify";
 
 const validationSchema = z.object({
   password: z.string(),
 });
 
-const DeleteConfirmModal = ({
+const ReAuthModal = ({
   isDialogOpen,
   setIsDialogOpen,
-  handleSubmitAction,
+  onSuccess,
 }: {
   isDialogOpen: boolean;
   setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleSubmitAction: () => void;
+  onSuccess: () => void;
 }) => {
   const user = auth.currentUser;
   const userProvider = user?.providerData[0].providerId;
@@ -51,11 +52,11 @@ const DeleteConfirmModal = ({
     try {
       if (user) {
         await reauthenticateUserAPI(user, password);
-        handleSubmitAction();
+        onSuccess();
       }
     } catch (e) {
       if (e instanceof Error) {
-        console.error(e.message);
+        toast.error(e.message);
       }
     }
   };
@@ -64,7 +65,9 @@ const DeleteConfirmModal = ({
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Please login again to procced</DialogTitle>
+          <DialogTitle>
+            Please enter your current password to procced
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -108,4 +111,4 @@ const DeleteConfirmModal = ({
   );
 };
 
-export default DeleteConfirmModal;
+export default ReAuthModal;

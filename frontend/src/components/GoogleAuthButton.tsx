@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/authContext";
+import { toast } from "react-toastify";
 
 const GoogleAuthButton = () => {
   const { loading, loginWithGoogle } = useAuth();
@@ -13,8 +14,10 @@ const GoogleAuthButton = () => {
       if (resultAction) {
         navigate("/feed");
       }
-    } catch (err) {
-      console.error("Google auth failed:", err);
+    } catch (e) {
+      if (e instanceof Error) {
+        toast.error(`Google auth failed: ${e.message}`);
+      }
     }
   };
 

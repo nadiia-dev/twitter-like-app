@@ -44,7 +44,7 @@ const ForgotPasswordModal = ({
       setIsDialogOpen(false);
     } catch (e) {
       if (e instanceof Error) {
-        console.error(e.message);
+        toast.error(e.message);
       }
     }
   };

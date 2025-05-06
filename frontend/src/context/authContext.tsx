@@ -30,12 +30,7 @@ interface AuthContextType {
   deleteProfile: () => Promise<void>;
   updateUserProfile: (
     id: string,
-    userData: {
-      name: string;
-      email: string;
-      newPassword: string;
-      photoURL: string;
-    }
+    userData: { [k: string]: string }
   ) => Promise<User | undefined>;
 }
 
@@ -145,12 +140,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateUserProfile = async (
     id: string,
-    userData: {
-      name: string;
-      email: string;
-      newPassword: string;
-      photoURL: string;
-    }
+    userData: { [k: string]: string }
   ) => {
     setLoading(true);
     try {

@@ -1,4 +1,4 @@
-import DeleteConfirmModal from "@/components/DeleteConfirmModal";
+import ReAuthModal from "@/components/ReAuthModal";
 import RootLayout from "@/components/RootLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -67,6 +67,9 @@ const validationSchema = z
 const SettingsPage = () => {
   const { user, updateUserProfile, deleteProfile } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<() => Promise<void>>(
+    () => async () => {}
+  );
   const defaultValues = {
     name: user?.displayName || "",
     email: user?.email || "",
@@ -86,19 +89,17 @@ const SettingsPage = () => {
       setIsDialogOpen(false);
     } catch (e) {
       if (e instanceof Error) {
-        console.error(e.message);
+        toast.error(e.message);
       }
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof validationSchema>) => {
-    const userData = {
-      name: values?.name ?? "",
-      email: values?.email ?? "",
-      newPassword: values?.newPassword ?? "",
-      photoURL: values?.photoURL ?? "",
-    };
+  const onDeleteClick = () => {
+    setPendingAction(() => handleDeleteProfile);
+    setIsDialogOpen(true);
+  };
 
+  const handleUpdateProfile = async (userData: { [k: string]: string }) => {
     try {
       if (user) {
         await updateUserProfile(user?.uid, userData);
@@ -106,8 +107,26 @@ const SettingsPage = () => {
       }
     } catch (e) {
       if (e instanceof Error) {
-        console.error(e.message);
+        toast.error(e.message);
       }
+    }
+  };
+
+  const onSubmit = async (values: z.infer<typeof validationSchema>) => {
+    const userData = Object.fromEntries(
+      Object.entries({
+        name: values?.name ?? "",
+        email: values?.email ?? "",
+        newPassword: values?.newPassword ?? "",
+        photoURL: values?.photoURL ?? "",
+      }).filter(([_, value]) => value !== undefined && value !== "")
+    );
+
+    if (values?.newPassword !== "") {
+      setPendingAction(() => () => handleUpdateProfile(userData));
+      setIsDialogOpen(true);
+    } else {
+      handleUpdateProfile(userData);
     }
   };
 
@@ -172,23 +191,11 @@ const SettingsPage = () => {
                     />
                     {user?.providerData[0].providerId !== "google.com" && (
                       <>
-                        <FormField
-                          control={form.control}
-                          name="oldPassword"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Old Password</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="••••••••"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                        <h2 className="font-bold text-sm">Change Password</h2>
+                        <p className="text-xs">
+                          You can update your password here. You`ll be asked to
+                          confirm your identity before saving changes.
+                        </p>
                         <FormField
                           control={form.control}
                           name="newPassword"
@@ -233,7 +240,7 @@ const SettingsPage = () => {
                   <Button
                     type="button"
                     variant="destructive"
-                    onClick={() => setIsDialogOpen(true)}
+                    onClick={onDeleteClick}
                   >
                     Delete profile
                   </Button>
@@ -242,10 +249,10 @@ const SettingsPage = () => {
             </Form>
           </CardContent>
         </Card>
-        <DeleteConfirmModal
+        <ReAuthModal
           isDialogOpen={isDialogOpen}
           setIsDialogOpen={setIsDialogOpen}
-          handleSubmitAction={handleDeleteProfile}
+          onSuccess={pendingAction}
         />
       </div>
     </RootLayout>

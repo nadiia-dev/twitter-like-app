@@ -132,12 +132,7 @@ export const deleteUserAPI = async () => {
 
 export const updateUserProfileAPI = async (
   id: string,
-  userData: {
-    name: string;
-    email: string;
-    newPassword: string;
-    photoURL: string;
-  }
+  userData: { [k: string]: string }
 ) => {
   try {
     const res = await instance.put(`/users/${id}`, userData);

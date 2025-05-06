@@ -27,6 +27,7 @@ import {
 import { useAuth } from "@/context/authContext";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const items = [
   {
@@ -55,7 +56,7 @@ const AppSidebar = () => {
       await logoutUser();
     } catch (e) {
       if (e instanceof Error) {
-        console.error(e.message);
+        toast.error(e.message);
       }
     }
   };
