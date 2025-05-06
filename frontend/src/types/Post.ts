@@ -1,3 +1,10 @@
+export interface CreatePost {
+  title: string;
+  text: string;
+  imageURL?: string;
+  authorId: string;
+}
+
 export interface Post {
   id: string;
   title: string;

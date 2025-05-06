@@ -1,11 +1,15 @@
 import { getUserAPI } from "@/api/userApi";
 import AccountPageHeader from "@/components/AccountPageHeader";
+import PostForm from "@/components/PostForm";
 import RootLayout from "@/components/RootLayout";
+import { Button } from "@/components/ui/button";
 import UserPosts from "@/components/UserPosts";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 const UserAccountPage = () => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const params = useParams();
   const userId = params.id!;
 
@@ -19,7 +23,21 @@ const UserAccountPage = () => {
   return (
     <RootLayout>
       <AccountPageHeader userData={userData} />
+      <div className="text-center">
+        <Button
+          variant="default"
+          className="inline-block w-30"
+          onClick={() => setIsDrawerOpen(true)}
+        >
+          Add post
+        </Button>
+      </div>
       <UserPosts userId={userId} user={userData} />
+      <PostForm
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+        user={userData}
+      />
     </RootLayout>
   );
 };

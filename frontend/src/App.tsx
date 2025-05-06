@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/authContext";
 import SettingsPage from "./pages/Settings";
 import UserAccountPage from "./pages/UserAccountPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import EditPost from "./pages/EditPost";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,14 @@ function App() {
           element: (
             <ProtectedRoute>
               <UserAccountPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/edit/:id",
+          element: (
+            <ProtectedRoute>
+              <EditPost />
             </ProtectedRoute>
           ),
         },

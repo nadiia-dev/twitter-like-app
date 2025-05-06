@@ -12,5 +12,5 @@ export class CreatePostDto {
 
   @IsUrl({}, { message: 'Image URL must be a valid URL' })
   @IsOptional()
-  imageUrl: string;
+  imageURL: string;
 }

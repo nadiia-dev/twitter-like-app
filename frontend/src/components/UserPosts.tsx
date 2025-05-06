@@ -14,7 +14,9 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { User } from "@/types/User";
 import { MessageCircle, Pencil, ThumbsDown, ThumbsUp } from "lucide-react";
 import { auth } from "@/firebase/config";
-import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+import { useState } from "react";
+import PostForm from "./PostForm";
 
 const formatDate = (rawDate: {
   _seconds: number;
@@ -31,6 +33,8 @@ const formatDate = (rawDate: {
 
 const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
   const curUser = auth.currentUser;
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [curPost, setCurPost] = useState<Post | undefined>();
 
   const { data: postsData, isLoading } = useQuery({
     queryKey: ["postsByUser", userId],
@@ -67,14 +71,22 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
                   </div>
                   {curUser?.uid === post.authorId && (
                     <div className="right-4 top-35">
-                      <Link to={`/post/${post.id}`}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => {
+                          setCurPost(post);
+                          setIsDrawerOpen(true);
+                        }}
+                      >
                         <Pencil size={16} />
-                      </Link>
+                      </Button>
                     </div>
                   )}
                 </div>
               </CardHeader>
               <CardContent>
+                <h3 className="font-bold mb-2 capitalize">{post.title}</h3>
                 <p>{post.text}</p>
                 {post.imageURL && (
                   <div className="rounded-lg overflow-hidden">
@@ -105,6 +117,12 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
             </Card>
           ))}
       </div>
+      <PostForm
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+        user={user}
+        curPost={curPost}
+      />
     </div>
   );
 };

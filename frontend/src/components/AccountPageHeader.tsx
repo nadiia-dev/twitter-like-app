@@ -3,7 +3,6 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { User } from "@/types/User";
-import { Button } from "./ui/button";
 
 const AccountPageHeader = ({ userData }: { userData: User }) => {
   const curUser = auth.currentUser;
@@ -36,11 +35,6 @@ const AccountPageHeader = ({ userData }: { userData: User }) => {
           </div>
         </>
       )}
-      <div className="text-center">
-        <Button variant="default" className="inline-block w-30">
-          Add post
-        </Button>
-      </div>
     </div>
   );
 };

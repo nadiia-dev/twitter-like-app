@@ -123,7 +123,10 @@ export class PostsService {
     try {
       const firestore = this.firebaseService.getFirestore();
       const postsRef = firestore.collection('posts');
-      const snapshot = await postsRef.where('authorId', '==', userId).get();
+      const snapshot = await postsRef
+        .where('authorId', '==', userId)
+        .orderBy('createdAt', 'desc')
+        .get();
 
       if (snapshot.empty) {
         throw new HttpException('No posts found.', 404);
@@ -149,12 +152,12 @@ export class PostsService {
   async createPost(postData: CreatePostDto): Promise<Post | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
-    const { title, text, authorId, imageUrl } = postData;
+    const { title, text, authorId, imageURL } = postData;
     try {
       const newPostRef = await postsRef.add({
         title,
         text,
-        imageUrl,
+        ...(imageURL !== undefined && { imageURL }),
         authorId,
         likes: [],
         likesCount: 0,
