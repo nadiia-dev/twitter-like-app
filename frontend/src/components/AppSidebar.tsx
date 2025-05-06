@@ -126,7 +126,9 @@ const AppSidebar = () => {
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem>Account</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to={`/account/${user?.uid}`}>Account</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
                   Logout
                 </DropdownMenuItem>

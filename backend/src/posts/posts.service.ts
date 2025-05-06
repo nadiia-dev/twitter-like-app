@@ -149,11 +149,12 @@ export class PostsService {
   async createPost(postData: CreatePostDto): Promise<Post | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
-    const { title, text, authorId } = postData;
+    const { title, text, authorId, imageUrl } = postData;
     try {
       const newPostRef = await postsRef.add({
         title,
         text,
+        imageUrl,
         authorId,
         likes: [],
         likesCount: 0,

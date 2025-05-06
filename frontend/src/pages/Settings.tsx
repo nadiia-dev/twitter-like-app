@@ -150,28 +150,28 @@ const SettingsPage = () => {
           <h1 className="font-bold text-3xl font-orbitron">Profile Settings</h1>
         </header>
         <Card className="w-full">
-          <CardContent className="p-6">
+          <CardContent>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6"
               >
-                <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col lg:flex-row gap-6">
                   {/* Avatar block */}
                   <div className="flex flex-col gap-4 md:w-1/3">
-                    <Avatar className="h-20 w-20 rounded-lg overflow-hidden">
+                    <Label htmlFor="picture" className="text-sm leading-none">
+                      Avatar
+                    </Label>
+                    <Avatar className="h-30 w-30 rounded-lg overflow-hidden">
                       {form.watch("photoURL") && (
                         <AvatarImage
                           src={form.watch("photoURL")}
-                          alt="user avatar"
+                          alt={user?.displayName || "user avatar"}
                           className="w-full h-full object-cover"
                         />
                       )}
                     </Avatar>
                     <div>
-                      <Label htmlFor="picture" className="mb-2">
-                        Avatar
-                      </Label>
                       <Input id="picture" type="file" onChange={handleChange} />
                     </div>
                   </div>

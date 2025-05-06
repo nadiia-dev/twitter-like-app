@@ -137,8 +137,19 @@ export const updateUserProfileAPI = async (
   try {
     const res = await instance.put(`/users/${id}`, userData);
     if (res) {
-      return res.data();
+      return res.data;
     }
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};
+
+export const getUserAPI = async (id: string) => {
+  try {
+    const res = await instance.get(`/users/${id}`);
+    return res.data;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

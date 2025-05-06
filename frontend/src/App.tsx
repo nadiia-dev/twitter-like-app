@@ -8,6 +8,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./context/authContext";
 import SettingsPage from "./pages/Settings";
+import UserAccountPage from "./pages/UserAccountPage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   const router = createBrowserRouter([
@@ -59,14 +63,24 @@ function App() {
             </ProtectedRoute>
           ),
         },
+        {
+          path: "/account/:id",
+          element: (
+            <ProtectedRoute>
+              <UserAccountPage />
+            </ProtectedRoute>
+          ),
+        },
       ],
     },
   ]);
 
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
