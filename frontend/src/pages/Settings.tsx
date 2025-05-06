@@ -133,7 +133,13 @@ const SettingsPage = () => {
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const newUrl = await handleFileChange(e);
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const newUrl = await handleFileChange({
+        file,
+        folder: "userPhotos",
+      });
+
       form.setValue("photoURL", newUrl);
     } catch (e) {
       if (e instanceof Error) {

@@ -1,4 +1,7 @@
+import { deleteObject, ref } from "firebase/storage";
 import { instance } from "./apiInstance";
+import { fireDb, storage } from "@/firebase/config";
+import { doc, getDoc } from "firebase/firestore";
 
 export const getPostsByUserAPI = async (userId: string) => {
   try {
@@ -41,7 +44,13 @@ export const updatePostAPI = async ({
 
 export const deletePostAPI = async (id: string) => {
   try {
+    const docRef = doc(fireDb, "posts", id);
+    const post = await getDoc(docRef);
     const res = await instance.delete(`/posts/${id}`);
+    if (post.exists()) {
+      const imageRef = ref(storage, post.data().imageURL);
+      await deleteObject(imageRef);
+    }
     return res.data();
   } catch (e) {
     if (e instanceof Error) {

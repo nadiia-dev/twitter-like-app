@@ -1,20 +1,17 @@
-import { auth, storage } from "../firebase/config";
+import { storage } from "../firebase/config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-export const handleFileChange = async (
-  e: React.ChangeEvent<HTMLInputElement>
-) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  const user = auth.currentUser;
-  if (!user) {
-    console.error("User is not authenticated.");
-    return;
-  }
-
+export const handleFileChange = async ({
+  file,
+  folder,
+}: {
+  file: File;
+  folder: string;
+}) => {
   try {
-    const storageRef = ref(storage, `userPhotos/${user.uid}/${file.name}`);
+    const uniqueName = `${Date.now()}_${file.name}`;
+    console.log(uniqueName);
+    const storageRef = ref(storage, `${folder}/${uniqueName}`);
 
     const snapshot = await uploadBytesResumable(storageRef, file);
 

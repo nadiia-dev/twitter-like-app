@@ -24,6 +24,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPostAPI, updatePostAPI } from "@/api/postApi";
 import { Post } from "@/types/Post";
 import { useEffect } from "react";
+import { handleFileChange } from "@/lib/handleFileChange";
+import { toast } from "react-toastify";
+import { ScrollArea } from "./ui/scroll-area";
 
 const validationSchema = z.object({
   title: z.string().min(2),
@@ -89,7 +92,7 @@ const PostForm = ({
         title: values.title,
         text: values.text,
         authorId: user.id,
-        imageURL: "",
+        imageURL: values.imageURL ?? "",
       }).filter(([_, value]) => value !== undefined && value !== "")
     );
     if (!curPost) {
@@ -101,6 +104,22 @@ const PostForm = ({
     }
   };
 
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const newUrl = await handleFileChange({
+        file,
+        folder: "postsPhotos",
+      });
+      form.setValue("imageURL", newUrl);
+    } catch (e) {
+      if (e instanceof Error) {
+        toast.error(e.message);
+      }
+    }
+  };
+
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerContent>
@@ -109,48 +128,62 @@ const PostForm = ({
             <DrawerTitle>{user.name}</DrawerTitle>
           </DrawerHeader>
           <DrawerFooter>
-            <Form {...form}>
-              <form
-                className="flex flex-col gap-4"
-                onSubmit={form.handleSubmit(onSubmit)}
-              >
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Add theme"
-                          type="title"
-                          {...field}
+            <ScrollArea className="overflow-y-auto">
+              <Form {...form}>
+                <form
+                  className="flex flex-col gap-4"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Add theme"
+                            type="title"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="text"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Text</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="What`s on your mind?"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div>
+                    <div className="text-center w-full h-30 max-h-48 overflow-hidden rounded-md mb-1">
+                      {form.watch("imageURL") && (
+                        <img
+                          src={form.watch("imageURL")}
+                          alt={curPost?.title || "post image"}
+                          className="w-full h-full object-cover"
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="text"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Text</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="What`s on your mind?"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit">Submit</Button>
-              </form>
-            </Form>
+                      )}
+                    </div>
+                    <Input id="picture" type="file" onChange={handleChange} />
+                  </div>
+                  <Button type="submit">Submit</Button>
+                </form>
+              </Form>
+            </ScrollArea>
           </DrawerFooter>
         </div>
       </DrawerContent>

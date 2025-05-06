@@ -188,12 +188,12 @@ export class PostsService {
   ): Promise<Post | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
-    const { title, text, imageUrl } = postData;
+    const { title, text, imageURL } = postData;
     try {
       await postsRef.doc(id).update({
         ...(title !== undefined && { title }),
         ...(text !== undefined && { text }),
-        ...(imageUrl !== undefined && { imageUrl }),
+        ...(imageURL !== undefined && { imageURL }),
         updatedAt: admin.firestore.Timestamp.now(),
       });
       const updatedPostSnap = await postsRef.doc(id).get();

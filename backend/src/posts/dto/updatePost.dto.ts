@@ -11,5 +11,5 @@ export class UpdatePostDto {
 
   @IsUrl({}, { message: 'Image URL must be a valid URL' })
   @IsOptional()
-  imageUrl: string;
+  imageURL: string;
 }

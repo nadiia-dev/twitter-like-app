@@ -64,7 +64,7 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
   return (
     <div className="p-4">
       <h2 className="font-bold font-orbitron text-3xl mb-4">Posts</h2>
-      <div className="px-8 grid grid-rows-1 gap-5">
+      <div className="px-2 md:px-8 grid grid-rows-1 gap-5">
         {postsData &&
           postsData.map((post: Post) => (
             <Card key={post.id}>
@@ -112,7 +112,7 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
               </CardHeader>
               <CardContent>
                 <h3 className="font-bold mb-2 capitalize">{post.title}</h3>
-                <p>{post.text}</p>
+                <p className="mb-2.5">{post.text}</p>
                 {post.imageURL && (
                   <div className="rounded-lg overflow-hidden">
                     <img
