@@ -4,6 +4,7 @@ import {
   loginWithGoogleAPI,
   logoutAPI,
   registerUserAPI,
+  updateUserProfileAPI,
 } from "@/api/userApi";
 import { auth } from "@/firebase/config";
 // import { UserProfile } from "@/types/User";
@@ -27,6 +28,15 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<User | undefined>;
   logoutUser: () => Promise<void>;
   deleteProfile: () => Promise<void>;
+  updateUserProfile: (
+    id: string,
+    userData: {
+      name: string;
+      email: string;
+      newPassword: string;
+      photoURL: string;
+    }
+  ) => Promise<User | undefined>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,6 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       const user = await registerUserAPI(userData);
+
       if (user) {
         setUser(user);
         return user;
@@ -132,6 +143,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const updateUserProfile = async (
+    id: string,
+    userData: {
+      name: string;
+      email: string;
+      newPassword: string;
+      photoURL: string;
+    }
+  ) => {
+    setLoading(true);
+    try {
+      const user = await updateUserProfileAPI(id, userData);
+      if (user) {
+        setUser(user);
+        return user;
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(e.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext
       value={{
@@ -144,6 +180,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         loginWithGoogle,
         logoutUser,
         deleteProfile,
+        updateUserProfile,
       }}
     >
       {children}
