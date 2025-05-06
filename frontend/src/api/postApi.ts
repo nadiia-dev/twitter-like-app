@@ -38,3 +38,14 @@ export const updatePostAPI = async ({
     }
   }
 };
+
+export const deletePostAPI = async (id: string) => {
+  try {
+    const res = await instance.delete(`/posts/${id}`);
+    return res.data();
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};

@@ -1,5 +1,5 @@
-import { getPostsByUserAPI } from "@/api/postApi";
-import { useQuery } from "@tanstack/react-query";
+import { deletePostAPI, getPostsByUserAPI } from "@/api/postApi";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -12,7 +12,13 @@ import { Post } from "@/types/Post";
 import { Timestamp } from "firebase/firestore";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { User } from "@/types/User";
-import { MessageCircle, Pencil, ThumbsDown, ThumbsUp } from "lucide-react";
+import {
+  MessageCircle,
+  Pencil,
+  ThumbsDown,
+  ThumbsUp,
+  Trash2,
+} from "lucide-react";
 import { auth } from "@/firebase/config";
 import { Button } from "./ui/button";
 import { useState } from "react";
@@ -35,11 +41,23 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
   const curUser = auth.currentUser;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [curPost, setCurPost] = useState<Post | undefined>();
+  const queryClient = useQueryClient();
 
   const { data: postsData, isLoading } = useQuery({
     queryKey: ["postsByUser", userId],
     queryFn: () => getPostsByUserAPI(userId!),
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deletePostAPI(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["postsByUser", user.id] });
+    },
+  });
+
+  const handleDelete = (postId: string) => {
+    deleteMutation.mutate(postId);
+  };
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -80,6 +98,13 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
                         }}
                       >
                         <Pencil size={16} />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => handleDelete(post.id)}
+                      >
+                        <Trash2 size={16} />
                       </Button>
                     </div>
                   )}
