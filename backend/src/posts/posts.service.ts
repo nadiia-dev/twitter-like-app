@@ -22,8 +22,8 @@ export interface Post {
   dislikes: string[];
   dislikesCount: number;
   commentsCount: number;
-  createdAt?: admin.firestore.Timestamp;
-  updatedAt?: admin.firestore.Timestamp;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface PostWithAuthor extends Post {
@@ -81,10 +81,13 @@ export class PostsService {
         throw new HttpException('No posts found.', 404);
       }
       const posts: Post[] = snapshot.docs.map((doc): Post => {
-        const data = doc.data() as Omit<Post, 'id'>;
+        const data = doc.data() as Omit<Post, 'id'> & {
+          createdAt: admin.firestore.Timestamp;
+        };
         return {
           id: doc.id,
           ...data,
+          createdAt: data.createdAt?.toDate().toISOString(),
         };
       });
 

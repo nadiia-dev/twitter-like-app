@@ -1,8 +1,63 @@
+import { getFeedAPI } from "@/api/postApi";
+import PostCard from "@/components/PostCard";
+import Spinner from "@/components/Spinner";
+import { Post } from "@/types/Post";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+const limit = 1;
+interface Cursor {
+  lastValue: number | undefined;
+  lastCreated: string | undefined;
+}
+
 const Feed = () => {
+  const {
+    data: posts,
+    error,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["posts"],
+    queryFn: ({ pageParam }) => {
+      const cursor = pageParam as Cursor;
+      return getFeedAPI({
+        sortParam: "likesCount",
+        limit,
+        lastValue: cursor?.lastValue,
+        lastCreated: cursor?.lastCreated,
+      });
+    },
+    initialPageParam: { lastValue: undefined, lastCreated: undefined },
+    getNextPageParam: (lastPage) => {
+      const lastPost = lastPage[lastPage.length - 1];
+      if (!lastPost) return undefined;
+
+      return {
+        lastValue: lastPost.likesCount,
+        lastCreated: lastPost.createdAt,
+      };
+    },
+  });
+
+  if (error) return <p>{error.message}</p>;
+
   return (
     <div className="p-4">
       <h1 className="font-orbitron font-bold text-3xl mb-4">Feed</h1>
-      <div></div>
+
+      {posts && (
+        <InfiniteScroll
+          dataLength={posts.pages.length}
+          loader={<Spinner />}
+          next={fetchNextPage}
+          hasMore={hasNextPage}
+        >
+          {posts.pages[0].map((post: Post) => (
+            <PostCard key={post.id} post={post} context="feed" />
+          ))}
+        </InfiniteScroll>
+      )}
     </div>
   );
 };

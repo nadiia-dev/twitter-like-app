@@ -32,6 +32,7 @@ const UserPosts = ({ userId }: { userId: string }) => {
               setCurPost={setCurPost}
               setIsDrawerOpen={setIsDrawerOpen}
               context="profile"
+              userId={userId}
             />
           ))}
       </div>

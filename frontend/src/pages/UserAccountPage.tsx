@@ -13,7 +13,7 @@ const UserAccountPage = () => {
   const curUser = auth.currentUser;
   const params = useParams();
   const userId = params.id;
-  const { data: userData, isLoading } = useUser(userId);
+  const { data: userData, isLoading } = useUser(userId!);
 
   if (isLoading) return <Spinner />;
 

@@ -16,10 +16,10 @@ import {
   User2,
 } from "lucide-react";
 import { Button } from "./ui/button";
-import { formatDate } from "@/lib/formatDate";
+// import { formatDate } from "@/lib/formatDate";
 import { Post } from "@/types/Post";
 import { auth } from "@/firebase/config";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePostAPI } from "@/api/postApi";
 import useUser from "@/hooks/useUser";
@@ -30,19 +30,20 @@ const PostCard = ({
   setCurPost,
   setIsDrawerOpen,
   context,
+  userId,
 }: {
   post: Post;
-  setCurPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
-  setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurPost?: React.Dispatch<React.SetStateAction<Post | undefined>>;
+  setIsDrawerOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   context: string;
+  userId?: string;
 }) => {
   const curUser = auth.currentUser;
   const navigate = useNavigate();
-  const params = useParams();
   const queryClient = useQueryClient();
-  const userId = params.id!;
-
-  const { data: user, isLoading } = useUser(userId);
+  const { data: user, isLoading } = useUser(
+    userId !== undefined ? userId : post.authorId
+  );
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deletePostAPI(id),
@@ -80,7 +81,7 @@ const PostCard = ({
             <div className="flex items-center gap-2">
               <CardTitle className="font-semibold">{user.name}</CardTitle>
               <CardDescription className="text-zinc-400 text-sm">
-                {formatDate(post.createdAt)}
+                {post.createdAt}
               </CardDescription>
             </div>
           </div>
@@ -91,8 +92,8 @@ const PostCard = ({
                 variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurPost(post);
-                  setIsDrawerOpen(true);
+                  if (setCurPost) setCurPost(post);
+                  if (setIsDrawerOpen) setIsDrawerOpen(true);
                 }}
               >
                 <Pencil size={16} />

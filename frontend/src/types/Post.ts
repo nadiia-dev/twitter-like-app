@@ -13,10 +13,7 @@ export interface Post {
   text: string;
   imageURL: string;
   authorId: string;
-  createdAt: {
-    _seconds: number;
-    _nanoseconds: number;
-  };
+  createdAt: string;
   updatedAt: {
     _seconds: number;
     _nanoseconds: number;
