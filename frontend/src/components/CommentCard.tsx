@@ -9,7 +9,7 @@ import {
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { formatDate } from "@/lib/formatDate";
 import { CommentWithAuthor } from "@/types/Post";
-import { EllipsisVertical, MessageCircle } from "lucide-react";
+import { EllipsisVertical, MessageCircle, User2 } from "lucide-react";
 import { commentReplies } from "@/lib/CommentReplies";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -99,13 +99,17 @@ const CommentCard = ({
       <Card className="mb-1">
         <CardHeader>
           <div className="flex items-start gap-2">
-            <Avatar className="w-6 h-6 rounded-full overflow-hidden">
-              <AvatarImage
-                src={comment.author.photoURL}
-                alt={comment.author.name}
-                className="w-full h-full object-cover"
-              />
-            </Avatar>
+            {comment.author.photoURL ? (
+              <Avatar className="w-6 h-6 rounded-full overflow-hidden">
+                <AvatarImage
+                  src={comment.author.photoURL}
+                  alt={comment.author.name}
+                  className="w-full h-full object-cover"
+                />
+              </Avatar>
+            ) : (
+              <User2 />
+            )}
             <div className="flex-1">
               <div className="flex justify-between items-center gap-1">
                 <div>

@@ -9,6 +9,7 @@ import { auth } from "@/firebase/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCommentAPI } from "@/api/commentsApi";
 import { CommentData } from "@/types/Comment";
+import { User2 } from "lucide-react";
 
 const validationSchema = z.object({
   text: z.string().min(2),
@@ -57,15 +58,17 @@ const CommentForm = ({
       <Form {...form}>
         <form className="flex flex-col" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex gap-2 items-center w-full">
-            <Avatar className="w-6 h-6 rounded-full overflow-hidden">
-              {curUser && (
+            {curUser?.photoURL ? (
+              <Avatar className="w-6 h-6 rounded-full overflow-hidden">
                 <AvatarImage
                   src={curUser.photoURL || ""}
                   alt={curUser.displayName || ""}
                   className="w-full h-full object-cover"
                 />
-              )}
-            </Avatar>
+              </Avatar>
+            ) : (
+              <User2 />
+            )}
             <FormField
               control={form.control}
               name="text"

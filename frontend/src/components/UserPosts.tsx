@@ -17,6 +17,7 @@ import {
   ThumbsDown,
   ThumbsUp,
   Trash2,
+  User2,
 } from "lucide-react";
 import { auth } from "@/firebase/config";
 import { Button } from "./ui/button";
@@ -64,13 +65,17 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
             <Card key={post.id} onClick={() => handleViewPost(post.id)}>
               <CardHeader>
                 <div className="flex items-start gap-3">
-                  <Avatar className="w-10 h-10 rounded-full overflow-hidden">
-                    <AvatarImage
-                      src={user.photoURL}
-                      alt={user.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </Avatar>
+                  {user.photoURL ? (
+                    <Avatar className="w-10 h-10 rounded-full overflow-hidden">
+                      <AvatarImage
+                        src={user.photoURL}
+                        alt={user.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </Avatar>
+                  ) : (
+                    <User2 />
+                  )}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <CardTitle className="font-semibold">

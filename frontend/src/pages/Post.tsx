@@ -17,7 +17,7 @@ import { formatDate } from "@/lib/formatDate";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
+import { MessageCircle, ThumbsDown, ThumbsUp, User2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -66,13 +66,17 @@ const Post = () => {
             <Card className="mb-3">
               <CardHeader>
                 <div className="flex items-start gap-3">
-                  <Avatar className="w-10 h-10 rounded-full overflow-hidden">
-                    <AvatarImage
-                      src={postData.post.author.photoURL}
-                      alt={postData.post.author.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </Avatar>
+                  {postData.post.author.photoURL ? (
+                    <Avatar className="w-10 h-10 rounded-full overflow-hidden">
+                      <AvatarImage
+                        src={postData.post.author.photoURL}
+                        alt={postData.post.author.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </Avatar>
+                  ) : (
+                    <User2 />
+                  )}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <CardTitle
