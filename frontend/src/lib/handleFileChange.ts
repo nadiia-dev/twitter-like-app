@@ -10,7 +10,6 @@ export const handleFileChange = async ({
 }) => {
   try {
     const uniqueName = `${Date.now()}_${file.name}`;
-    console.log(uniqueName);
     const storageRef = ref(storage, `${folder}/${uniqueName}`);
 
     const snapshot = await uploadBytesResumable(storageRef, file);
