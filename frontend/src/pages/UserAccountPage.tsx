@@ -2,6 +2,7 @@ import { getUserAPI } from "@/api/userApi";
 import AccountPageHeader from "@/components/AccountPageHeader";
 import PostForm from "@/components/PostForm";
 import RootLayout from "@/components/RootLayout";
+import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import UserPosts from "@/components/UserPosts";
 import { auth } from "@/firebase/config";
@@ -20,7 +21,7 @@ const UserAccountPage = () => {
     queryFn: () => getUserAPI(userId!),
   });
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Spinner />;
 
   return (
     <RootLayout>

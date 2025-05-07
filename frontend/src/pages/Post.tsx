@@ -1,6 +1,7 @@
 import { getPostByIdAPI } from "@/api/postApi";
 import CommentCard from "@/components/CommentCard";
 import RootLayout from "@/components/RootLayout";
+import Spinner from "@/components/Spinner";
 import {
   Card,
   CardContent,
@@ -48,7 +49,7 @@ const Post = () => {
     postId,
   });
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Spinner />;
 
   return (
     <RootLayout>

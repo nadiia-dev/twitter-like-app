@@ -24,6 +24,7 @@ import { useState } from "react";
 import PostForm from "./PostForm";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "@/lib/formatDate";
+import Spinner from "./Spinner";
 
 const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const UserPosts = ({ userId, user }: { userId: string; user: User }) => {
     navigate(`/post/${postId}`);
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Spinner />;
 
   return (
     <div className="p-4">
