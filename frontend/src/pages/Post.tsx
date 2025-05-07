@@ -19,6 +19,7 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Post = () => {
@@ -26,6 +27,10 @@ const Post = () => {
   const params = useParams();
   const postId = params.id!;
   const curUserId = auth.currentUser!.uid;
+  const [curComment, setCurComment] = useState({
+    id: "",
+    name: "",
+  });
 
   const { data: postData, isLoading } = useQuery({
     queryKey: ["postById", postId],
@@ -141,13 +146,14 @@ const Post = () => {
                       comments={postData.comments}
                       comment={comment}
                       postAuthor={postData.post.authorId}
+                      setCurComment={setCurComment}
                     />
                   ))}
             </div>
           </>
         )}
       </div>
-      <CommentForm postId={postData!.post.id} />
+      <CommentForm postId={postData!.post.id} parentComment={curComment} />
     </RootLayout>
   );
 };

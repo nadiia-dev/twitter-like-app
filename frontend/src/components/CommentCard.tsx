@@ -18,10 +18,14 @@ const CommentCard = ({
   comments,
   comment,
   postAuthor,
+  setCurComment,
 }: {
   comments: CommentWithAuthor[];
   comment: CommentWithAuthor;
   postAuthor: string;
+  setCurComment: React.Dispatch<
+    React.SetStateAction<{ id: string; name: string }>
+  >;
 }) => {
   const navigate = useNavigate();
   const [showComments, setShowComments] = useState(false);
@@ -78,6 +82,13 @@ const CommentCard = ({
               <MessageCircle className="w-4 h-4" />
               <span>{replies.length || 0}</span>
             </div>
+            <div
+              onClick={() =>
+                setCurComment({ id: comment.id, name: comment.author.name })
+              }
+            >
+              Reply
+            </div>
           </div>
         </CardFooter>
       </Card>
@@ -89,6 +100,7 @@ const CommentCard = ({
               comments={comments}
               comment={reply}
               postAuthor={postAuthor}
+              setCurComment={setCurComment}
             />
           ))}
         </div>

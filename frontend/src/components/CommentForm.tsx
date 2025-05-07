@@ -16,10 +16,10 @@ const validationSchema = z.object({
 
 const CommentForm = ({
   postId,
-  parentCommentId,
+  parentComment,
 }: {
   postId: string;
-  parentCommentId?: string;
+  parentComment?: { id: string; name: string };
 }) => {
   const queryClient = useQueryClient();
   const curUser = auth.currentUser;
@@ -43,12 +43,13 @@ const CommentForm = ({
   });
 
   const onSubmit = (values: z.infer<typeof validationSchema>) => {
-    console.log(values);
     const commentData = {
       text: values.text || "",
       authorId: curUser!.uid,
+      parentCommentId: parentComment?.id || "",
     };
     createMutation.mutate({ postId, commentData });
+    form.reset({ text: "" });
   };
 
   return (
@@ -73,7 +74,11 @@ const CommentForm = ({
                   <FormControl>
                     <Input
                       className="bg-stone-50 rounded-4xl text-xs w-full"
-                      placeholder="Share your thoughts here..."
+                      placeholder={
+                        parentComment?.name
+                          ? `Your reply to ${parentComment?.name}`
+                          : "Share your thoughts here..."
+                      }
                       type="text"
                       {...field}
                     />
