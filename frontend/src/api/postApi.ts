@@ -58,3 +58,14 @@ export const deletePostAPI = async (id: string) => {
     }
   }
 };
+
+export const getPostByIdAPI = async (id: string) => {
+  try {
+    const res = await instance.get(`/posts/${id}`);
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};

@@ -5,6 +5,12 @@ import * as admin from 'firebase-admin';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { Comment } from 'src/comments/comments.service';
 
+interface UserProfile {
+  id: string;
+  name: string;
+  photoURL?: string;
+}
+
 export interface Post {
   id: string;
   title: string;
@@ -20,9 +26,17 @@ export interface Post {
   updatedAt?: admin.firestore.Timestamp;
 }
 
-export interface PostWithComments {
-  post: Post;
-  comments: Comment[];
+interface PostWithAuthor extends Post {
+  author: UserProfile;
+}
+
+interface CommentWithAuthor extends Comment {
+  author: UserProfile;
+}
+
+export interface PostWithCommentsAndAuthors {
+  post: PostWithAuthor;
+  comments: CommentWithAuthor[];
 }
 
 @Injectable()
@@ -83,9 +97,10 @@ export class PostsService {
     }
   }
 
-  async getPost(id: string): Promise<PostWithComments | undefined> {
+  async getPost(id: string): Promise<PostWithCommentsAndAuthors | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
+    const usersRef = firestore.collection('users');
     try {
       const postDoc = await postsRef.doc(id).get();
 
@@ -93,23 +108,59 @@ export class PostsService {
         throw new HttpException('Post not found.', 404);
       }
 
-      const commentsSnapshot = await firestore
-        .collection('comments')
-        .where('postId', '==', id)
-        .orderBy('createdAt', 'asc')
-        .get();
-
-      const comments = commentsSnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        } as Comment;
-      });
-
-      const post = {
+      const postData = {
         id: postDoc.id,
         ...postDoc.data(),
       } as Post;
+
+      const postAuthorDoc = await usersRef.doc(postData.authorId).get();
+      const postAuthor = {
+        id: postAuthorDoc.id,
+        name: postAuthorDoc.data()?.name as string,
+        photoURL: postAuthorDoc.data()?.photoURL as string,
+      } as UserProfile;
+
+      const commentsSnapshot = await firestore
+        .collection('comments')
+        .where('postId', '==', id)
+        .orderBy('createdAt', 'desc')
+        .get();
+
+      const commentsRaw = commentsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Comment[];
+
+      const commentsAuthorsId = Array.from(
+        new Set(commentsRaw.map((c) => c.authorId)),
+      );
+
+      const commentsAuthors = await Promise.all(
+        commentsAuthorsId.map((authorId) => usersRef.doc(authorId).get()),
+      );
+
+      const commentAuthorsMap = new Map<string, UserProfile>();
+      commentsAuthors.forEach((doc) => {
+        if (doc.exists) {
+          commentAuthorsMap.set(doc.id, {
+            id: doc.id,
+            name: doc.data()?.name as string,
+            photoURL: doc.data()?.photoURL as string,
+          } as UserProfile);
+        }
+      });
+
+      const post: PostWithAuthor = {
+        ...postData,
+        id: postDoc.id,
+        author: postAuthor,
+      };
+
+      const comments: CommentWithAuthor[] = commentsRaw.map((comment) => ({
+        ...comment,
+        author: commentAuthorsMap.get(comment.authorId)!,
+      }));
+
       return { post, comments };
     } catch (error) {
       if (error instanceof Error) {
