@@ -3,18 +3,20 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotVerified from "./pages/NotVerified";
-import Feed from "./pages/Feed";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./context/authContext";
-import SettingsPage from "./pages/Settings";
-import UserAccountPage from "./pages/UserAccountPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Post from "./pages/Post";
 import Error from "./pages/Error";
 import RootLayout from "./components/RootLayout";
+import { lazy } from "react";
 
 const queryClient = new QueryClient();
+
+const Feed = lazy(() => import("./pages/Feed.tsx"));
+const SettingsPage = lazy(() => import("./pages/Settings.tsx"));
+const UserAccountPage = lazy(() => import("./pages/UserAccountPage.tsx"));
+const Post = lazy(() => import("./pages/Post.tsx"));
 
 function App() {
   const router = createBrowserRouter([
