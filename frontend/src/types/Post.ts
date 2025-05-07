@@ -23,7 +23,9 @@ export interface Post {
   };
   commentsCount: number;
   likesCount: number;
+  likes: string[];
   dislikesCount: number;
+  dislikes: string[];
 }
 
 interface UserProfile {

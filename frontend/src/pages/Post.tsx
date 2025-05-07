@@ -9,20 +9,35 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { auth } from "@/firebase/config";
+import useToggleLike from "@/hooks/useToggleLike";
 import { formatDate } from "@/lib/formatDate";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
 import { MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 const Post = () => {
   const params = useParams();
   const postId = params.id!;
+  const curUserId = auth.currentUser!.uid;
 
   const { data: postData, isLoading } = useQuery({
     queryKey: ["postById", postId],
     queryFn: () => getPostByIdAPI(postId),
   });
+  let isLiked = false;
+  if (postData) {
+    isLiked = postData.post.likes.some((like) => like === curUserId);
+  }
+
+  const { liked, toggleLike } = useToggleLike({
+    initialState: isLiked,
+    postId,
+    likesCount: postData?.post.likesCount || 0,
+  });
+  console.log(liked);
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -79,7 +94,13 @@ const Post = () => {
                     <ThumbsDown className="w-4 h-4" />
                     <span>{postData.post.dislikesCount || 0}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div
+                    className={clsx(
+                      "flex items-center gap-1",
+                      liked && "text-red-600"
+                    )}
+                    onClick={toggleLike}
+                  >
                     <ThumbsUp className="w-4 h-4" />
                     <span>{postData.post.likesCount || 0}</span>
                   </div>
