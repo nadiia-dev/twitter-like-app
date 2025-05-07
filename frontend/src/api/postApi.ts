@@ -2,6 +2,7 @@ import { deleteObject, ref } from "firebase/storage";
 import { instance } from "./apiInstance";
 import { fireDb, storage } from "@/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
+import { PostDetails } from "@/types/Post";
 
 export const getPostsByUserAPI = async (userId: string) => {
   try {
@@ -59,9 +60,12 @@ export const deletePostAPI = async (id: string) => {
   }
 };
 
-export const getPostByIdAPI = async (id: string) => {
+export const getPostByIdAPI = async (
+  id: string
+): Promise<PostDetails | undefined> => {
   try {
     const res = await instance.get(`/posts/${id}`);
+    console.log(res.data);
     return res.data;
   } catch (e) {
     if (e instanceof Error) {

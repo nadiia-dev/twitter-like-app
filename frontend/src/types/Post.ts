@@ -1,3 +1,5 @@
+import { Comment } from "./Comment";
+
 export interface CreatePost {
   title: string;
   text: string;
@@ -22,4 +24,23 @@ export interface Post {
   commentsCount: number;
   likesCount: number;
   dislikesCount: number;
+}
+
+interface UserProfile {
+  id: string;
+  name: string;
+  photoURL?: string;
+}
+
+interface PostWithAuthor extends Post {
+  author: UserProfile;
+}
+
+export interface CommentWithAuthor extends Comment {
+  author: UserProfile;
+}
+
+export interface PostDetails {
+  post: PostWithAuthor;
+  comments: CommentWithAuthor[];
 }
