@@ -6,13 +6,24 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { formatDate } from "@/lib/formatDate";
 import { CommentWithAuthor } from "@/types/Post";
-import { MessageCircle } from "lucide-react";
+import { EllipsisVertical, MessageCircle } from "lucide-react";
 import { commentReplies } from "@/lib/CommentReplies";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { auth } from "@/firebase/config";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteCommentAPI } from "@/api/commentsApi";
 
 const CommentCard = ({
   comments,
@@ -29,11 +40,30 @@ const CommentCard = ({
 }) => {
   const navigate = useNavigate();
   const [showComments, setShowComments] = useState(false);
+  const isMobile = useIsMobile();
+  const curUser = auth.currentUser;
+  const queryClient = useQueryClient();
 
   const replies = commentReplies({
     comments: comments!,
     curCommentId: comment.id!,
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: ({
+      postId,
+      commentId,
+    }: {
+      postId: string;
+      commentId: string;
+    }) => deleteCommentAPI({ postId, commentId }),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["postById", comment.postId] }),
+  });
+
+  const handleDelete = () => {
+    deleteMutation.mutate({ postId: comment.postId, commentId: comment.id });
+  };
 
   return (
     <>
@@ -74,21 +104,45 @@ const CommentCard = ({
           <p className="mb-2.5">{comment.text}</p>
         </CardContent>
         <CardFooter>
-          <div className="w-full flex gap-4 justify-start items-center text-zinc-400 text-sm">
-            <div
-              className="flex items-center gap-1"
-              onClick={() => setShowComments((prev) => !prev)}
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>{replies.length || 0}</span>
+          <div className="w-full flex justify-between items-center text-zinc-400 text-sm">
+            <div className="flex gap-4">
+              <div
+                className="flex items-center gap-1"
+                onClick={() => setShowComments((prev) => !prev)}
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>{replies.length || 0}</span>
+              </div>
+              <div
+                onClick={() =>
+                  setCurComment({ id: comment.id, name: comment.author.name })
+                }
+              >
+                Reply
+              </div>
             </div>
-            <div
-              onClick={() =>
-                setCurComment({ id: comment.id, name: comment.author.name })
-              }
-            >
-              Reply
-            </div>
+            {comment.author.id === curUser?.uid && (
+              <div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost">
+                      <EllipsisVertical />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                    side={isMobile ? "top" : "right"}
+                    align="end"
+                    sideOffset={4}
+                  >
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleDelete}>
+                      Remove
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
         </CardFooter>
       </Card>
