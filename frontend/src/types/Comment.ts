@@ -1,3 +1,9 @@
+export interface CommentData {
+  authorId: string;
+  text: string;
+  parentCommentId?: string;
+}
+
 export interface Comment {
   id: string;
   postId: string;

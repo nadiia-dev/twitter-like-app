@@ -65,7 +65,6 @@ export const getPostByIdAPI = async (
 ): Promise<PostDetails | undefined> => {
   try {
     const res = await instance.get(`/posts/${id}`);
-    console.log(res.data);
     return res.data;
   } catch (e) {
     if (e instanceof Error) {

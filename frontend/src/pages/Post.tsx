@@ -1,5 +1,6 @@
 import { getPostByIdAPI } from "@/api/postApi";
 import CommentCard from "@/components/CommentCard";
+import CommentForm from "@/components/CommentForm";
 import RootLayout from "@/components/RootLayout";
 import Spinner from "@/components/Spinner";
 import {
@@ -18,9 +19,10 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Post = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const postId = params.id!;
   const curUserId = auth.currentUser!.uid;
@@ -69,7 +71,13 @@ const Post = () => {
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <CardTitle className="font-semibold">
+                      <CardTitle
+                        className="font-semibold"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/account/${postData.post.authorId}`);
+                        }}
+                      >
                         {postData.post.author.name}
                       </CardTitle>
                       <CardDescription className="text-zinc-400 text-sm">
@@ -139,6 +147,7 @@ const Post = () => {
           </>
         )}
       </div>
+      <CommentForm postId={postData!.post.id} />
     </RootLayout>
   );
 };

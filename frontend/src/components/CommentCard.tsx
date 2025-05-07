@@ -12,6 +12,7 @@ import { CommentWithAuthor } from "@/types/Post";
 import { MessageCircle } from "lucide-react";
 import { commentReplies } from "@/lib/CommentReplies";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CommentCard = ({
   comments,
@@ -22,6 +23,7 @@ const CommentCard = ({
   comment: CommentWithAuthor;
   postAuthor: string;
 }) => {
+  const navigate = useNavigate();
   const [showComments, setShowComments] = useState(false);
 
   const replies = commentReplies({
@@ -44,7 +46,13 @@ const CommentCard = ({
             <div className="flex-1">
               <div className="flex justify-between items-center gap-1">
                 <div>
-                  <CardTitle className="font-semibold">
+                  <CardTitle
+                    className="font-semibold"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/account/${comment.authorId}`);
+                    }}
+                  >
                     {comment.author.name}
                   </CardTitle>
                   <CardDescription className="text-zinc-400 text-sm">
