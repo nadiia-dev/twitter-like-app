@@ -1,3 +1,4 @@
+import ToastComponent from "@/lib/toasts";
 import AppSidebar from "./AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "./ui/sidebar";
 
@@ -13,6 +14,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </main>
       </SidebarProvider>
+      <ToastComponent />
     </div>
   );
 };

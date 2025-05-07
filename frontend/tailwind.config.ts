@@ -1,15 +1,11 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+export default {
   theme: {
     extend: {
       fontFamily: {
-        Orbitron: ["Orbitron", "sans-serif"],
+        orbitron: ["Orbitron", "sans-serif"],
       },
     },
   },
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   plugins: [],
 };
-
-export default config;

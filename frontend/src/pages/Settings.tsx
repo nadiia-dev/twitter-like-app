@@ -153,7 +153,7 @@ const SettingsPage = () => {
       <div className="p-4">
         <header className="flex gap-4 items-center mb-4">
           <Settings size={30} />
-          <h1 className="font-bold text-3xl font-orbitron">Profile Settings</h1>
+          <h1 className="font-orbitron font-bold text-3xl">Profile Settings</h1>
         </header>
         <Card className="w-full">
           <CardContent>
