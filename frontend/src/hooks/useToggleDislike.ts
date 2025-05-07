@@ -1,9 +1,9 @@
-import { toggleLikeAPI } from "@/api/interactionsApi";
+import { toggleDislikeAPI } from "@/api/interactionsApi";
 import { auth } from "@/firebase/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-const useToggleLike = ({
+const useToggleDislike = ({
   initialState,
   postId,
 }: {
@@ -11,28 +11,28 @@ const useToggleLike = ({
   postId: string;
 }) => {
   const userId = auth.currentUser?.uid;
-  const [liked, setLiked] = useState(initialState);
+  const [disliked, setDisliked] = useState(initialState);
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: ({ postId, userId }: { postId: string; userId: string }) =>
-      toggleLikeAPI({ postId, userId }),
+      toggleDislikeAPI({ postId, userId }),
     onMutate: () => {
-      setLiked((prev) => !prev);
+      setDisliked((prev) => !prev);
     },
     onError: () => {
-      setLiked((prev) => !prev);
+      setDisliked((prev) => !prev);
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["postById", postId] }),
   });
 
-  const toggleLike = () => {
+  const toggleDislike = () => {
     mutation.mutate({ postId, userId: userId! });
-    setLiked((prev) => !prev);
+    setDisliked((prev) => !prev);
   };
 
-  return { liked, toggleLike };
+  return { disliked, toggleDislike };
 };
 
-export default useToggleLike;
+export default useToggleDislike;

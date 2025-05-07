@@ -16,3 +16,20 @@ export const toggleLikeAPI = async ({
     }
   }
 };
+
+export const toggleDislikeAPI = async ({
+  postId,
+  userId,
+}: {
+  postId: string;
+  userId: string;
+}) => {
+  try {
+    const res = await instance.post(`/posts/${postId}/dislike`, { userId });
+    return res.data();
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};

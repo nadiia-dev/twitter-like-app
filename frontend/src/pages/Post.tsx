@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/firebase/config";
+import useToggleDislike from "@/hooks/useToggleDislike";
 import useToggleLike from "@/hooks/useToggleLike";
 import { formatDate } from "@/lib/formatDate";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
@@ -27,17 +28,25 @@ const Post = () => {
     queryKey: ["postById", postId],
     queryFn: () => getPostByIdAPI(postId),
   });
+
   let isLiked = false;
+  let isDisliked = false;
   if (postData) {
     isLiked = postData.post.likes.some((like) => like === curUserId);
+    isDisliked = postData.post.dislikes.some(
+      (dislike) => dislike === curUserId
+    );
   }
 
   const { liked, toggleLike } = useToggleLike({
     initialState: isLiked,
     postId,
-    likesCount: postData?.post.likesCount || 0,
   });
-  console.log(liked);
+
+  const { disliked, toggleDislike } = useToggleDislike({
+    initialState: isDisliked,
+    postId,
+  });
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -90,7 +99,13 @@ const Post = () => {
                     <MessageCircle className="w-4 h-4" />
                     <span>{postData.post.commentsCount || 0}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div
+                    className={clsx(
+                      "flex items-center gap-1",
+                      disliked && "text-red-600"
+                    )}
+                    onClick={toggleDislike}
+                  >
                     <ThumbsDown className="w-4 h-4" />
                     <span>{postData.post.dislikesCount || 0}</span>
                   </div>
