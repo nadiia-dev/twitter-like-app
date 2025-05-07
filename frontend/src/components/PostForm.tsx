@@ -68,7 +68,7 @@ const PostForm = ({
 
   const createMutation = useMutation({
     mutationFn: (newPost: { [k: string]: string }) => createPostAPI(newPost),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["postsByUser", user.id] });
     },
   });
@@ -81,7 +81,7 @@ const PostForm = ({
       id: string;
       postData: { [k: string]: string };
     }) => updatePostAPI({ id, postData }),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["postsByUser", user.id] });
     },
   });

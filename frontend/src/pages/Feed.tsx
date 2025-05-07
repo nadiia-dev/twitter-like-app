@@ -1,7 +1,5 @@
-import RootLayout from "@/components/RootLayout";
-
 const Feed = () => {
-  return <RootLayout>Feed</RootLayout>;
+  return <>Feed</>;
 };
 
 export default Feed;

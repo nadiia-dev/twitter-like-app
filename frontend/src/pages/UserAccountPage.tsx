@@ -1,7 +1,6 @@
 import { getUserAPI } from "@/api/userApi";
 import AccountPageHeader from "@/components/AccountPageHeader";
 import PostForm from "@/components/PostForm";
-import RootLayout from "@/components/RootLayout";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import UserPosts from "@/components/UserPosts";
@@ -24,7 +23,7 @@ const UserAccountPage = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <RootLayout>
+    <>
       <AccountPageHeader userData={userData} />
       {curUser?.uid === userData.id && (
         <div className="text-center">
@@ -43,7 +42,7 @@ const UserAccountPage = () => {
         setIsDrawerOpen={setIsDrawerOpen}
         user={userData}
       />
-    </RootLayout>
+    </>
   );
 };
 

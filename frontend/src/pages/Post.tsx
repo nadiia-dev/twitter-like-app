@@ -1,7 +1,6 @@
 import { getPostByIdAPI } from "@/api/postApi";
 import CommentCard from "@/components/CommentCard";
 import CommentForm from "@/components/CommentForm";
-import RootLayout from "@/components/RootLayout";
 import Spinner from "@/components/Spinner";
 import {
   Card,
@@ -59,7 +58,7 @@ const Post = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <RootLayout>
+    <>
       <div className="p-4">
         <h1 className="font-bold text-3xl font-orbitron mb-4">Thred</h1>
         {postData && (
@@ -154,7 +153,7 @@ const Post = () => {
         )}
       </div>
       <CommentForm postId={postData!.post.id} parentComment={curComment} />
-    </RootLayout>
+    </>
   );
 };
 

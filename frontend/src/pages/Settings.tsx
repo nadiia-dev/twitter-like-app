@@ -1,5 +1,4 @@
 import ReAuthModal from "@/components/ReAuthModal";
-import RootLayout from "@/components/RootLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -149,7 +148,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <RootLayout>
+    <>
       <div className="p-4">
         <header className="flex gap-4 items-center mb-4">
           <Settings size={30} />
@@ -276,7 +275,7 @@ const SettingsPage = () => {
           onSuccess={pendingAction}
         />
       </div>
-    </RootLayout>
+    </>
   );
 };
 

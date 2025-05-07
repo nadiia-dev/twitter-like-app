@@ -11,6 +11,8 @@ import SettingsPage from "./pages/Settings";
 import UserAccountPage from "./pages/UserAccountPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Post from "./pages/Post";
+import Error from "./pages/Error";
+import RootLayout from "./components/RootLayout";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +21,7 @@ function App() {
     {
       path: "/",
       id: "root",
+      errorElement: <Error />,
       children: [
         {
           index: true,
@@ -49,36 +52,29 @@ function App() {
           element: <NotVerified />,
         },
         {
-          path: "/feed",
           element: (
             <ProtectedRoute>
-              <Feed />
+              <RootLayout />
             </ProtectedRoute>
           ),
-        },
-        {
-          path: "/settings",
-          element: (
-            <ProtectedRoute>
-              <SettingsPage />
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: "/account/:id",
-          element: (
-            <ProtectedRoute>
-              <UserAccountPage />
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: "/post/:id",
-          element: (
-            <ProtectedRoute>
-              <Post />
-            </ProtectedRoute>
-          ),
+          children: [
+            {
+              path: "/feed",
+              element: <Feed />,
+            },
+            {
+              path: "/settings",
+              element: <SettingsPage />,
+            },
+            {
+              path: "/account/:id",
+              element: <UserAccountPage />,
+            },
+            {
+              path: "/post/:id",
+              element: <Post />,
+            },
+          ],
         },
       ],
     },
