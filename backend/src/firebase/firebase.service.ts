@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import * as serviceAccountObj from '../../serviceAccountKey.json';
 
 @Injectable()
 export class FirebaseService {
@@ -8,9 +7,12 @@ export class FirebaseService {
 
   constructor() {
     if (!admin.apps.length) {
-      const serviceAccount = JSON.parse(
-        JSON.stringify(serviceAccountObj),
-      ) as admin.ServiceAccount;
+      const serviceAccount: admin.ServiceAccount = {
+        projectId: process.env.PROJECT_ID as string,
+        privateKey: process.env.PRIVATE_KEY as string,
+        clientEmail: process.env.CLIENT_EMAIL as string,
+      };
+
       this.fireApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         storageBucket: `gs://${serviceAccount.projectId}.firebasestorage.app`,
