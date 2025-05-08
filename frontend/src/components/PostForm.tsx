@@ -93,7 +93,7 @@ const PostForm = ({
         text: values.text,
         authorId: user.id,
         imageURL: values.imageURL ?? "",
-      }).filter(([_, value]) => value !== undefined && value !== "")
+      }).filter((entry) => entry[1] !== undefined && entry[1] !== "")
     );
     if (!curPost) {
       createMutation.mutate(newPost);

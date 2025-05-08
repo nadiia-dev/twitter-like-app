@@ -119,7 +119,7 @@ const SettingsPage = () => {
         email: values?.email ?? "",
         newPassword: values?.newPassword ?? "",
         photoURL: values?.photoURL ?? "",
-      }).filter(([_, value]) => value !== undefined && value !== "")
+      }).filter((entry) => entry[1] !== undefined && entry[1] !== "")
     );
 
     if (values?.newPassword !== "") {
