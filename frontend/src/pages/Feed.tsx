@@ -5,7 +5,7 @@ import { Post } from "@/types/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const limit = 1;
+const limit = 2;
 interface Cursor {
   lastValue: number | undefined;
   lastCreated: string | undefined;
@@ -28,8 +28,9 @@ const Feed = () => {
         lastCreated: cursor?.lastCreated,
       });
     },
-    initialPageParam: { lastValue: undefined, lastCreated: undefined },
+    initialPageParam: { lastValue: 0, lastCreated: "" },
     getNextPageParam: (lastPage) => {
+      if (lastPage.length === 0) return undefined;
       const lastPost = lastPage[lastPage.length - 1];
       if (!lastPost) return undefined;
 
@@ -48,12 +49,12 @@ const Feed = () => {
 
       {posts && (
         <InfiniteScroll
-          dataLength={posts.pages.length}
+          dataLength={posts.pages.flat().length}
           loader={<Spinner />}
           next={fetchNextPage}
           hasMore={hasNextPage}
         >
-          {posts.pages[0].map((post: Post) => (
+          {posts.pages.flat().map((post: Post) => (
             <PostCard key={post.id} post={post} context="feed" />
           ))}
         </InfiniteScroll>

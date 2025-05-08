@@ -62,7 +62,7 @@ export class PostsService {
         .orderBy(sortBy, 'desc')
         .orderBy('createdAt', 'desc');
 
-      if (lastValue && lastCreated) {
+      if (lastValue !== undefined && lastCreated) {
         const lastCreatedDate = new Date(lastCreated);
         if (isNaN(lastCreatedDate.getTime())) {
           throw new HttpException('Invalid lastCreated date.', 400);
@@ -78,7 +78,7 @@ export class PostsService {
       const snapshot = await postsQuery.get();
 
       if (snapshot.empty) {
-        throw new HttpException('No posts found.', 404);
+        return [];
       }
       const posts: Post[] = snapshot.docs.map((doc): Post => {
         const data = doc.data() as Omit<Post, 'id'> & {
