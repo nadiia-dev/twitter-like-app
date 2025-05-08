@@ -17,6 +17,7 @@ const Feed = lazy(() => import("./pages/Feed.tsx"));
 const SettingsPage = lazy(() => import("./pages/Settings.tsx"));
 const UserAccountPage = lazy(() => import("./pages/UserAccountPage.tsx"));
 const Post = lazy(() => import("./pages/Post.tsx"));
+const SearchPage = lazy(() => import("./pages/Search.tsx"));
 
 function App() {
   const router = createBrowserRouter([
@@ -75,6 +76,10 @@ function App() {
             {
               path: "/post/:id",
               element: <Post />,
+            },
+            {
+              path: "/search",
+              element: <SearchPage />,
             },
           ],
         },

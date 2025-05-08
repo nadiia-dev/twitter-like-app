@@ -95,3 +95,14 @@ export const getFeedAPI = async ({
     }
   }
 };
+
+export const searchAPI = async (query: string) => {
+  try {
+    const res = await instance.get(`/search/posts?query=${query}`);
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};

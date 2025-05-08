@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { InteractionsModule } from './interactions/interactions.module';
 import { CommentsModule } from './comments/comments.module';
+import { AlgoliaModule } from './algolia/algolia.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CommentsModule } from './comments/comments.module';
       envFilePath: '.env',
     }),
     FirebaseModule,
+    AlgoliaModule,
     UsersModule,
     PostsModule,
     InteractionsModule,
