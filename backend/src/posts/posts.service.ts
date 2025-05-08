@@ -111,9 +111,14 @@ export class PostsService {
         throw new HttpException('Post not found.', 404);
       }
 
+      const data = postDoc.data() as Omit<Post, 'id'> & {
+        createdAt: admin.firestore.Timestamp;
+      };
+
       const postData = {
         id: postDoc.id,
-        ...postDoc.data(),
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString(),
       } as Post;
 
       const postAuthorDoc = await usersRef.doc(postData.authorId).get();
@@ -187,10 +192,13 @@ export class PostsService {
       }
 
       const posts: Post[] = snapshot.docs.map((doc): Post => {
-        const data = doc.data() as Omit<Post, 'id'>;
+        const data = doc.data() as Omit<Post, 'id'> & {
+          createdAt: admin.firestore.Timestamp;
+        };
         return {
           id: doc.id,
           ...data,
+          createdAt: data.createdAt?.toDate().toISOString(),
         };
       });
 
@@ -222,9 +230,13 @@ export class PostsService {
       });
 
       const newPostSnapshot = await newPostRef.get();
+      const data = newPostSnapshot.data() as Omit<Post, 'id'> & {
+        createdAt: admin.firestore.Timestamp;
+      };
       const newPost = {
         id: newPostSnapshot.id,
-        ...newPostSnapshot.data(),
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString(),
       } as Post;
 
       return newPost;

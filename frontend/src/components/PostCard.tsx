@@ -16,7 +16,6 @@ import {
   User2,
 } from "lucide-react";
 import { Button } from "./ui/button";
-// import { formatDate } from "@/lib/formatDate";
 import { Post } from "@/types/Post";
 import { auth } from "@/firebase/config";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +23,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePostAPI } from "@/api/postApi";
 import useUser from "@/hooks/useUser";
 import Spinner from "./Spinner";
+import { formatDateFromString } from "@/lib/formatDate";
+import useToggleLike from "@/hooks/useToggleLike";
+import useToggleDislike from "@/hooks/useToggleDislike";
+import clsx from "clsx";
 
 const PostCard = ({
   post,
@@ -60,6 +63,23 @@ const PostCard = ({
     navigate(`/post/${postId}`);
   };
 
+  let isLiked = false;
+  let isDisliked = false;
+  if (post) {
+    isLiked = post.likes.some((like) => like === curUser?.uid);
+    isDisliked = post.dislikes.some((dislike) => dislike === curUser?.uid);
+  }
+
+  const { liked, toggleLike } = useToggleLike({
+    initialState: isLiked,
+    postId: post.id,
+  });
+
+  const { disliked, toggleDislike } = useToggleDislike({
+    initialState: isDisliked,
+    postId: post.id,
+  });
+
   if (isLoading) return <Spinner />;
 
   return (
@@ -78,10 +98,23 @@ const PostCard = ({
             <User2 />
           )}
           <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <CardTitle className="font-semibold">{user.name}</CardTitle>
+            <div
+              className={clsx(
+                "flex items-center gap-2",
+                context === "profile" && "flex-col items-start"
+              )}
+            >
+              <CardTitle
+                className="font-semibold"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/account/${user.id}`);
+                }}
+              >
+                {user.name}
+              </CardTitle>
               <CardDescription className="text-zinc-400 text-sm">
-                {post.createdAt}
+                {formatDateFromString(post.createdAt)}
               </CardDescription>
             </div>
           </div>
@@ -128,14 +161,31 @@ const PostCard = ({
       <CardFooter>
         <div className="w-full flex gap-4 justify-end items-end text-zinc-400 text-sm mt-2">
           <div className="flex items-center gap-1">
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle
+              className="w-4 h-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (context !== "postPage") {
+                  navigate(`/post/${post.id}`);
+                }
+              }}
+            />
             <span>{post.commentsCount || 0}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div
+            className={clsx(
+              "flex items-center gap-1",
+              disliked && "text-red-600"
+            )}
+            onClick={toggleDislike}
+          >
             <ThumbsDown className="w-4 h-4" />
             <span>{post.dislikesCount || 0}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div
+            className={clsx("flex items-center gap-1", liked && "text-red-600")}
+            onClick={toggleLike}
+          >
             <ThumbsUp className="w-4 h-4" />
             <span>{post.likesCount || 0}</span>
           </div>
