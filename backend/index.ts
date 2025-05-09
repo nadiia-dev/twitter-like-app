@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import express, { Express } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import { onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { AppModule } from './src/app.module';
 import { createAppContext } from './bootstrap-app';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const expressServer: Express = express();
 
@@ -13,12 +16,15 @@ const createFunction = async (expressInstance: Express): Promise<void> => {
     AppModule,
     new ExpressAdapter(expressInstance),
   );
-
-  app.enableCors({
-    origin: process.env.CLIENT_URL,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-    credentials: true,
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL);
+    res.header(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, OPTIONS',
+    );
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
   });
 
   await app.init();
