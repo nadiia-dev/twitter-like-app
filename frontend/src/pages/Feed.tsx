@@ -39,7 +39,6 @@ const Feed = () => {
         lastCreated: lastPost.createdAt,
       };
     },
-    refetchOnWindowFocus: false,
   });
 
   if (error) return <p>{error.message}</p>;
