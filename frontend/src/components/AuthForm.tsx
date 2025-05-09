@@ -23,18 +23,27 @@ import { z } from "zod";
 import { toast } from "react-toastify";
 import GoogleAuthButton from "./GoogleAuthButton";
 import ForgotPasswordModal from "./ForgotPasswordModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
+
+const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,20}$/;
 
 const validationSchema = z.object({
   name: z.string().min(2).optional(),
-  email: z.string().email(),
-  password: z.string(),
+  email: z.string().email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(20, "Password must be at most 20 characters")
+    .regex(
+      passwordRegex,
+      "Password must contain 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character (!@#$%^&*)"
+    ),
 });
 
 const AuthForm = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { register, login } = useAuth();
+  const { register, login, error } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
@@ -66,6 +75,12 @@ const AuthForm = () => {
       navigate("/not-verified");
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <>

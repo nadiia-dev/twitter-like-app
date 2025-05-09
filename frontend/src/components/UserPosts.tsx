@@ -16,6 +16,7 @@ const UserPosts = ({ userId }: { userId: string }) => {
   const { data: postsData, isLoading } = useQuery({
     queryKey: ["postsByUser", userId],
     queryFn: () => getPostsByUserAPI(userId!),
+    enabled: !!userId,
   });
 
   if (isLoading) return <Spinner />;

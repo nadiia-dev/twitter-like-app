@@ -8,7 +8,7 @@ import { Post } from "@/types/Post";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -33,9 +33,14 @@ const SearchPage = () => {
     resolver: zodResolver(validationSchema),
   });
 
+  useEffect(() => {
+    if (submittedQuery) {
+      refetch();
+    }
+  }, [submittedQuery, refetch]);
+
   const onSubmit = async (values: z.infer<typeof validationSchema>) => {
     setSubmittedQuery(values.query);
-    refetch();
   };
 
   if (isLoading) return <Spinner />;

@@ -39,6 +39,7 @@ const Feed = () => {
         lastCreated: lastPost.createdAt,
       };
     },
+    refetchOnWindowFocus: false,
   });
 
   if (error) return <p>{error.message}</p>;
@@ -46,13 +47,13 @@ const Feed = () => {
   return (
     <div className="p-4">
       <h1 className="font-orbitron font-bold text-3xl mb-4">Feed</h1>
-
       {posts && (
         <InfiniteScroll
           dataLength={posts.pages.flat().length}
           loader={<Spinner />}
           next={fetchNextPage}
           hasMore={hasNextPage}
+          className="flex flex-col gap-2"
         >
           {posts.pages.flat().map((post: Post) => (
             <PostCard key={post.id} post={post} context="feed" />

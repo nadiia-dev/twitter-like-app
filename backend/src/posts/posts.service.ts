@@ -188,7 +188,7 @@ export class PostsService {
         .get();
 
       if (snapshot.empty) {
-        throw new HttpException('No posts found.', 404);
+        return [];
       }
 
       const posts: Post[] = snapshot.docs.map((doc): Post => {

@@ -23,7 +23,7 @@ const AccountPageHeader = ({ userData }: { userData: User }) => {
                   />
                 </Avatar>
               ) : (
-                <User2 />
+                <User2 className="absolute top-35 left-4 h-10 w-10" />
               )}
               {isCurrentUser && (
                 <div className="absolute right-4 top-35">
