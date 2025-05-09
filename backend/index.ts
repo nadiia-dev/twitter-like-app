@@ -11,7 +11,12 @@ const createFunction = async (expressInstance): Promise<void> => {
     AppModule,
     new ExpressAdapter(expressInstance),
   );
-  app.enableCors();
+  app.enableCors({
+    origin: process.env.CLIENT_URL,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
+  });
   await app.init();
 };
 
