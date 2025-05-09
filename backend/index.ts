@@ -17,7 +17,10 @@ const createFunction = async (expressInstance: Express): Promise<void> => {
     new ExpressAdapter(expressInstance),
   );
   app.use((req: Request, res: Response, next: NextFunction) => {
-    res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL);
+    res.header(
+      'Access-Control-Allow-Origin',
+      'https://dependable-star-458507-a6.web.app',
+    );
     res.header(
       'Access-Control-Allow-Methods',
       'GET, POST, PUT, DELETE, OPTIONS',
