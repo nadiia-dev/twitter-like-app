@@ -29,7 +29,7 @@ const Post = () => {
         {postData && (
           <>
             <PostCard post={postData.post} context="postPage" />
-            <div>
+            <div className="mt-2">
               {postData.comments.length > 0 &&
                 postData.comments
                   .filter((comment) => !comment.parentCommentId)

@@ -177,14 +177,20 @@ const PostCard = ({
               "flex items-center gap-1",
               disliked && "text-red-600"
             )}
-            onClick={toggleDislike}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDislike();
+            }}
           >
             <ThumbsDown className="w-4 h-4" />
             <span>{post.dislikesCount || 0}</span>
           </div>
           <div
             className={clsx("flex items-center gap-1", liked && "text-red-600")}
-            onClick={toggleLike}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLike();
+            }}
           >
             <ThumbsUp className="w-4 h-4" />
             <span>{post.likesCount || 0}</span>

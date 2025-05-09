@@ -209,7 +209,7 @@ const SettingsPage = () => {
                         </FormItem>
                       )}
                     />
-                    {user?.providerData[0].providerId !== "google.com" && (
+                    {user?.providerData?.[0]?.providerId !== "google.com" && (
                       <>
                         <h2 className="font-bold text-sm">Change Password</h2>
                         <p className="text-xs">
