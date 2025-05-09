@@ -29,4 +29,8 @@ export class FirebaseService {
   getFirestore(): admin.firestore.Firestore {
     return this.fireApp.firestore();
   }
+
+  getStorage(): admin.storage.Storage {
+    return this.fireApp.storage();
+  }
 }

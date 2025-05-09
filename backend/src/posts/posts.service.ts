@@ -16,7 +16,7 @@ export interface Post {
   title: string;
   text: string;
   authorId: string;
-  imageUrl?: string;
+  imageURL?: string;
   likes: string[];
   likesCount: number;
   dislikes: string[];

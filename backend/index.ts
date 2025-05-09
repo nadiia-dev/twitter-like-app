@@ -2,21 +2,25 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express, { Express } from 'express';
 import { onRequest } from 'firebase-functions/v2/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { AppModule } from './src/app.module';
+import { createAppContext } from './bootstrap-app';
 
 const expressServer: Express = express();
 
-const createFunction = async (expressInstance): Promise<void> => {
+const createFunction = async (expressInstance: Express): Promise<void> => {
   const app = await NestFactory.create(
     AppModule,
     new ExpressAdapter(expressInstance),
   );
+
   app.enableCors({
     origin: process.env.CLIENT_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
+
   await app.init();
 };
 
@@ -30,5 +34,16 @@ export const api = onRequest(
       console.error('Error:', error);
       resp.status(500).send('Internal Server Error');
     }
+  },
+);
+
+export const filesCleanup = onSchedule(
+  { schedule: '00 00 * * *' },
+  async () => {
+    console.log('Starting scheduled cleanup...');
+    const { app, cleanupService } = await createAppContext();
+    await cleanupService.removeUnusedImages();
+    await app.close();
+    console.log('Cleanup completed.');
   },
 );

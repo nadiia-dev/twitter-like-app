@@ -109,4 +109,29 @@ export class UsersService {
       }
     }
   }
+
+  async getUsers(): Promise<UserProfile[] | undefined> {
+    const firestore = this.firebaseService.getFirestore();
+    const usersRef = firestore.collection('users');
+    try {
+      const userSnap = await usersRef.get();
+      if (!userSnap) {
+        throw new BadRequestException('Can`t get user by id');
+      }
+
+      const users: UserProfile[] = userSnap.docs.map((doc): UserProfile => {
+        const data = doc.data() as Omit<UserProfile, 'id'>;
+        return {
+          id: doc.id,
+          ...data,
+        };
+      });
+
+      return users;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+    }
+  }
 }
