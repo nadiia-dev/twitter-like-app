@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Express } from 'express';
 import { onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { AppModule } from './src/app.module';
@@ -16,18 +16,10 @@ const createFunction = async (expressInstance: Express): Promise<void> => {
     AppModule,
     new ExpressAdapter(expressInstance),
   );
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    res.header(
-      'Access-Control-Allow-Origin',
-      'https://dependable-star-458507-a6.web.app',
-    );
-    res.header(
-      'Access-Control-Allow-Methods',
-      'GET, POST, PUT, DELETE, OPTIONS',
-    );
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    next();
+  app.enableCors({
+    origin: 'https://dependable-star-458507-a6.web.app',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
   });
 
   await app.init();
