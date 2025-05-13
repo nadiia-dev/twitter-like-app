@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { FirebaseService } from 'src/firebase/firebase.service';
-import { Post } from 'src/posts/posts.service';
+import { Post } from 'src/types';
 
 @Injectable()
 export class InteractionsService {

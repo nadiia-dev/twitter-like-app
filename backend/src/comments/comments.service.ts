@@ -2,18 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import * as admin from 'firebase-admin';
 import { CreateCommentDto } from './dto/createComment.dto';
-import { Post } from 'src/posts/posts.service';
 import { UpdateCommentDto } from './dto/updateComment.dto';
-
-export interface Comment {
-  id: string;
-  postId: string;
-  authorId: string;
-  text: string;
-  parentCommentId?: string;
-  createdAt?: admin.firestore.Timestamp;
-  updatedAt?: admin.firestore.Timestamp;
-}
+import { Post } from 'src/types';
+import { Comment } from './comment.interface';
 
 @Injectable()
 export class CommentsService {

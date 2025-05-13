@@ -1,15 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { algoliasearch, SearchClient, SearchResponse } from 'algoliasearch';
 import dotenv from 'dotenv';
+import { AlgoliaPost } from './algolia.interface';
 
 dotenv.config();
-
-interface AlgoliaPost {
-  title: string;
-  content: string;
-  path: string;
-  createdAt: string;
-}
 
 @Injectable()
 export class AlgoliaService {

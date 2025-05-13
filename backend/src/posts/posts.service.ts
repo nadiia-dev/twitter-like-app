@@ -3,41 +3,14 @@ import { FirebaseService } from 'src/firebase/firebase.service';
 import { CreatePostDto } from './dto/createPost.dto';
 import * as admin from 'firebase-admin';
 import { UpdatePostDto } from './dto/updatePost.dto';
-import { Comment } from 'src/comments/comments.service';
-
-interface UserProfile {
-  id: string;
-  name: string;
-  photoURL?: string;
-}
-
-export interface Post {
-  id: string;
-  title: string;
-  text: string;
-  authorId: string;
-  imageURL?: string;
-  likes: string[];
-  likesCount: number;
-  dislikes: string[];
-  dislikesCount: number;
-  commentsCount: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-interface PostWithAuthor extends Post {
-  author: UserProfile;
-}
-
-interface CommentWithAuthor extends Comment {
-  author: UserProfile;
-}
-
-export interface PostWithCommentsAndAuthors {
-  post: PostWithAuthor;
-  comments: CommentWithAuthor[];
-}
+import { Comment } from 'src/types';
+import { UserProfile } from './interfaces/userProfile.interface';
+import { Post } from './interfaces/post.interface';
+import {
+  CommentWithAuthor,
+  PostWithAuthor,
+  PostWithCommentsAndAuthors,
+} from './interfaces/postWithCommentsAndAuthors.interface';
 
 @Injectable()
 export class PostsService {
