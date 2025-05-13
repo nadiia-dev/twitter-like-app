@@ -76,29 +76,22 @@ export const getPostByIdAPI = async (
 export const getFeedAPI = async ({
   sortParam,
   limit,
+  page,
   lastValue,
   lastCreated,
+  query,
 }: {
   sortParam: string;
   limit: number;
+  page: number;
   lastValue?: number;
   lastCreated?: string;
+  query?: string;
 }) => {
   try {
     const res = await instance.get(
-      `/posts?sortBy=${sortParam}&limit=${limit}&lastValue=${lastValue}&lastCreated=${lastCreated}`
+      `/posts?sortBy=${sortParam}&limit=${limit}&lastValue=${lastValue}&lastCreated=${lastCreated}&searchQuery=${query}&page=${page}`
     );
-    return res.data;
-  } catch (e) {
-    if (e instanceof Error) {
-      throw new Error(e.message);
-    }
-  }
-};
-
-export const searchAPI = async (query: string) => {
-  try {
-    const res = await instance.get(`/search/posts?query=${query}`);
     return res.data;
   } catch (e) {
     if (e instanceof Error) {

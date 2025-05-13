@@ -11,54 +11,94 @@ import {
   PostWithAuthor,
   PostWithCommentsAndAuthors,
 } from './interfaces/postWithCommentsAndAuthors.interface';
+import { algoliasearch, SearchClient, SearchResponse } from 'algoliasearch';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly firebaseService: FirebaseService) {}
+  private client: SearchClient;
+  private index: string;
+
+  constructor(private readonly firebaseService: FirebaseService) {
+    const appId = process.env.ALGOLIA_APP_ID;
+    const adminKey = process.env.ALGOLIA_ADMIN_API_KEY;
+    this.index = process.env.ALGOLIA_INDEX_NAME as string;
+
+    if (!appId || !adminKey) {
+      throw new Error(
+        'Algolia credentials are missing in environment variables',
+      );
+    }
+    this.client = algoliasearch(appId, adminKey);
+  }
 
   async getAllPosts(
     sortBy: string,
     limit: string,
+    page: string,
     lastValue?: number,
     lastCreated?: string,
+    query?: string,
   ): Promise<Post[] | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
     const pageSize = Number(limit) || 10;
 
     try {
-      let postsQuery = postsRef
-        .orderBy(sortBy, 'desc')
-        .orderBy('createdAt', 'desc');
+      let posts: Post[];
+      if (query) {
+        const result: SearchResponse<Post> =
+          await this.client.searchSingleIndex({
+            indexName: this.index,
+            searchParams: {
+              query: query,
+              hitsPerPage: pageSize,
+              page: Number(page) || 0,
+            },
+          });
 
-      if (lastValue !== undefined && lastCreated) {
-        const lastCreatedDate = new Date(lastCreated);
-        if (isNaN(lastCreatedDate.getTime())) {
-          throw new HttpException('Invalid lastCreated date.', 400);
+        if (!result.hits.length) {
+          return [];
         }
-        postsQuery = postsQuery.startAfter(
-          Number(lastValue),
-          admin.firestore.Timestamp.fromDate(new Date(lastCreated)),
-        );
+        posts = result.hits.map((hit) => {
+          return {
+            ...hit,
+            id: hit.objectID,
+          };
+        });
+      } else {
+        let postsQuery = postsRef
+          .orderBy(sortBy, 'desc')
+          .orderBy('createdAt', 'desc');
+
+        if (lastValue !== undefined && lastCreated) {
+          const lastCreatedDate = new Date(lastCreated);
+          if (isNaN(lastCreatedDate.getTime())) {
+            throw new HttpException('Invalid lastCreated date.', 400);
+          }
+          postsQuery = postsQuery.startAfter(
+            Number(lastValue),
+            admin.firestore.Timestamp.fromDate(new Date(lastCreated)),
+          );
+        }
+
+        postsQuery = postsQuery.limit(pageSize);
+
+        const snapshot = await postsQuery.get();
+
+        if (snapshot.empty) {
+          return [];
+        }
+        posts = snapshot.docs.map((doc): Post => {
+          const data = doc.data() as Omit<Post, 'id'> & {
+            createdAt: admin.firestore.Timestamp;
+          };
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate().toISOString(),
+          };
+        });
       }
-
-      postsQuery = postsQuery.limit(pageSize);
-
-      const snapshot = await postsQuery.get();
-
-      if (snapshot.empty) {
-        return [];
-      }
-      const posts: Post[] = snapshot.docs.map((doc): Post => {
-        const data = doc.data() as Omit<Post, 'id'> & {
-          createdAt: admin.firestore.Timestamp;
-        };
-        return {
-          id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate().toISOString(),
-        };
-      });
 
       return posts;
     } catch (error) {

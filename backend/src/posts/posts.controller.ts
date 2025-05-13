@@ -21,8 +21,15 @@ export class PostsController {
   @Auth()
   @Get()
   getAllPosts(@Query() query: QueryDto) {
-    const { sortBy, limit, lastValue, lastCreated } = query;
-    return this.postsService.getAllPosts(sortBy, limit, lastValue, lastCreated);
+    const { sortBy, limit, page, lastValue, lastCreated, searchQuery } = query;
+    return this.postsService.getAllPosts(
+      sortBy,
+      limit,
+      page,
+      lastValue,
+      lastCreated,
+      searchQuery,
+    );
   }
 
   @Auth()
