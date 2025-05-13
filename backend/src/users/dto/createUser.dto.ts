@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   MaxLength,
   MinLength,
-  IsAlpha,
   Matches,
 } from 'class-validator';
 
@@ -11,7 +10,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(2)
   @MaxLength(20)
-  @IsAlpha()
   name: string;
 
   @IsEmail()

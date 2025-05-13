@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Error from "./pages/Error";
 import RootLayout from "./components/RootLayout";
 import { lazy } from "react";
+import ToastComponent from "./lib/toasts.tsx";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +92,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <RouterProvider router={router} />
+        <ToastComponent />
       </AuthProvider>
     </QueryClientProvider>
   );

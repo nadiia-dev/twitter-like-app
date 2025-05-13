@@ -1,4 +1,3 @@
-import ToastComponent from "@/lib/toasts";
 import AppSidebar from "./AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "./ui/sidebar";
 import { Outlet } from "react-router-dom";
@@ -15,7 +14,6 @@ const RootLayout = () => {
           <Outlet />
         </main>
       </SidebarProvider>
-      <ToastComponent />
     </div>
   );
 };

@@ -70,9 +70,17 @@ const AuthForm = () => {
       await login({ email, password });
       navigate("/feed");
     } else {
-      await register({ name: name ? name : "", email, password });
-      toast.success("Registered successfuly!");
-      navigate("/not-verified");
+      try {
+        const res = await register({ name: name ? name : "", email, password });
+        if (res) {
+          toast.success("Registered successfully!");
+          navigate("/not-verified");
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          toast.error(e.message);
+        }
+      }
     }
   };
 
