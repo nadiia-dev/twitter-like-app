@@ -1,10 +1,10 @@
-import { getUserAPI } from "@/api/userApi";
+import { getMyProfileAPI, getUserAPI } from "@/api/userApi";
 import { useQuery } from "@tanstack/react-query";
 
-const useUser = (userId: string) => {
+const useUser = (isMyProfile: boolean, userId: string) => {
   return useQuery({
-    queryKey: ["getUser", userId],
-    queryFn: () => getUserAPI(userId!),
+    queryKey: ["getUser", isMyProfile ? "" : userId],
+    queryFn: () => (isMyProfile ? getMyProfileAPI() : getUserAPI(userId)),
     enabled: !!userId,
   });
 };

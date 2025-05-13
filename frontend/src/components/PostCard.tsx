@@ -44,7 +44,9 @@ const PostCard = ({
   const curUser = auth.currentUser;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const isMyProfile = curUser?.uid === userId;
   const { data: user, isLoading } = useUser(
+    isMyProfile,
     userId !== undefined ? userId : post.authorId
   );
 

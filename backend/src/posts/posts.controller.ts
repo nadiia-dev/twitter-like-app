@@ -11,6 +11,7 @@ import {
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
+import { Auth } from 'src/guards/auth.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -44,16 +45,19 @@ export class PostsController {
     return this.postsService.getAllPostsByUser(userId);
   }
 
+  @Auth()
   @Post()
   createPost(@Body() postRequest: CreatePostDto) {
     return this.postsService.createPost(postRequest);
   }
 
+  @Auth()
   @Put(':id')
   updatePost(@Param('id') id: string, @Body() postRequest: UpdatePostDto) {
     return this.postsService.updatePost(id, postRequest);
   }
 
+  @Auth()
   @Delete(':id')
   deletePost(@Param('id') id: string) {
     return this.postsService.deletePost(id);

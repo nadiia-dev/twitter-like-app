@@ -13,7 +13,7 @@ import {
   User,
 } from "firebase/auth";
 import { auth, fireDb, provider } from "../firebase/config";
-import { deleteDoc, doc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export const registerUserAPI = async (userData: {
   name: string;
@@ -66,6 +66,20 @@ export const loginWithGoogleAPI = async () => {
   try {
     const res = await signInWithPopup(auth, provider);
     const { user } = res;
+
+    const userDocRef = doc(fireDb, "users", user.uid);
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (!userDocSnapshot.exists()) {
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName,
+        photoURL: user.photoURL,
+        createdAt: new Date(),
+      });
+    }
+
     return user;
   } catch (e) {
     if (e instanceof Error) {
@@ -119,7 +133,7 @@ export const deleteUserAPI = async () => {
   const user = auth.currentUser;
   try {
     if (user) {
-      await deleteDoc(doc(fireDb, "users", user.uid));
+      await instance.delete("/users");
       await deleteUser(user);
       return { message: "User Deleted." };
     }
@@ -145,9 +159,20 @@ export const updateUserProfileAPI = async (userData: {
   }
 };
 
-export const getUserAPI = async (id?: string) => {
+export const getUserAPI = async (id: string) => {
   try {
     const res = await instance.get(`/users/${id}`);
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+  }
+};
+
+export const getMyProfileAPI = async () => {
+  try {
+    const res = await instance.get(`/users/me`);
     return res.data;
   } catch (e) {
     if (e instanceof Error) {

@@ -5,13 +5,10 @@ import { useState } from "react";
 import PostForm from "./PostForm";
 import Spinner from "./Spinner";
 import PostCard from "./PostCard";
-import useUser from "@/hooks/useUser";
 
 const UserPosts = ({ userId }: { userId: string }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [curPost, setCurPost] = useState<Post | undefined>();
-
-  const { data: user } = useUser(userId);
 
   const { data: postsData, isLoading } = useQuery({
     queryKey: ["postsByUser", userId],
@@ -40,7 +37,6 @@ const UserPosts = ({ userId }: { userId: string }) => {
       <PostForm
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
-        user={user}
         curPost={curPost}
       />
     </div>

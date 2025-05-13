@@ -11,16 +11,18 @@ import { useParams } from "react-router-dom";
 const UserAccountPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const curUser = auth.currentUser;
+  const currentUserId = curUser?.uid;
   const params = useParams();
-  const userId = params.id;
-  const { data: userData, isLoading } = useUser(userId!);
+  const routeId = params.id;
+  const isMyProfile = currentUserId === routeId;
+  const { data: userData, isLoading } = useUser(isMyProfile, routeId!);
 
   if (isLoading) return <Spinner />;
 
   return (
     <>
       <AccountPageHeader userData={userData} />
-      {curUser?.uid === userData.id && (
+      {isMyProfile && (
         <div className="text-center">
           <Button
             variant="default"
@@ -31,12 +33,8 @@ const UserAccountPage = () => {
           </Button>
         </div>
       )}
-      <UserPosts userId={userId!} />
-      <PostForm
-        isDrawerOpen={isDrawerOpen}
-        setIsDrawerOpen={setIsDrawerOpen}
-        user={userData}
-      />
+      <UserPosts userId={userData.id!} />
+      <PostForm isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
     </>
   );
 };

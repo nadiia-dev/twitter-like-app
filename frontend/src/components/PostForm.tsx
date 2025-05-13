@@ -6,7 +6,6 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Button } from "./ui/button";
-import { User } from "@/types/User";
 import {
   Form,
   FormControl,
@@ -27,6 +26,7 @@ import { useEffect } from "react";
 import { handleFileChange } from "@/lib/handleFileChange";
 import { toast } from "react-toastify";
 import { ScrollArea } from "./ui/scroll-area";
+import { auth } from "@/firebase/config";
 
 const validationSchema = z.object({
   title: z.string().min(2),
@@ -37,14 +37,15 @@ const validationSchema = z.object({
 const PostForm = ({
   isDrawerOpen,
   setIsDrawerOpen,
-  user,
   curPost,
 }: {
   isDrawerOpen: boolean;
   setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  user: User;
   curPost?: Post;
 }) => {
+  const user = auth.currentUser;
+  const userId = user?.uid;
+  const userName = user?.displayName;
   const queryClient = useQueryClient();
   const defaultValues = {
     title: curPost?.title ?? "",
@@ -69,7 +70,7 @@ const PostForm = ({
   const createMutation = useMutation({
     mutationFn: (newPost: { [k: string]: string }) => createPostAPI(newPost),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["postsByUser", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["postsByUser", userId] });
     },
   });
 
@@ -82,7 +83,7 @@ const PostForm = ({
       postData: { [k: string]: string };
     }) => updatePostAPI({ id, postData }),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["postsByUser", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["postsByUser", userId] });
     },
   });
 
@@ -91,7 +92,7 @@ const PostForm = ({
       Object.entries({
         title: values.title,
         text: values.text,
-        authorId: user.id,
+        authorId: userId!,
         imageURL: values.imageURL ?? "",
       }).filter((entry) => entry[1] !== undefined && entry[1] !== "")
     );
@@ -125,7 +126,7 @@ const PostForm = ({
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
-            <DrawerTitle>{user.name}</DrawerTitle>
+            <DrawerTitle>{userName}</DrawerTitle>
           </DrawerHeader>
           <DrawerFooter>
             <ScrollArea className="overflow-y-auto">

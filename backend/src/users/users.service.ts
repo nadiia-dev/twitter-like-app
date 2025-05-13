@@ -83,6 +83,26 @@ export class UsersService {
     }
   }
 
+  async getMyProfile(id: string): Promise<UserProfile | undefined> {
+    const firestore = this.firebaseService.getFirestore();
+    const usersRef = firestore.collection('users');
+    try {
+      const userSnap = await usersRef.doc(id).get();
+      if (!userSnap) {
+        throw new BadRequestException('Can`t get user by id');
+      }
+      const userData = userSnap.data() as UserProfile;
+      return {
+        ...userData,
+        id: userSnap.id,
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+    }
+  }
+
   async getUserProfileById(id: string): Promise<UserProfile | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const usersRef = firestore.collection('users');
@@ -124,6 +144,27 @@ export class UsersService {
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
+      }
+    }
+  }
+
+  async deleteUserAccount(id: string) {
+    const firestore = this.firebaseService.getFirestore();
+    const usersRef = firestore.collection('users');
+
+    try {
+      const userDoc = usersRef.doc(id);
+      if (!userDoc) {
+        throw new Error('Post not found');
+      }
+
+      await userDoc.delete();
+
+      return { message: 'Your account deleted successfully' };
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error deleting user account: ', error.message);
+        throw new Error(error.message);
       }
     }
   }
