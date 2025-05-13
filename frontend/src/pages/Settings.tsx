@@ -73,7 +73,7 @@ const SettingsPage = () => {
   const defaultValues = {
     name: user?.displayName || "",
     email: user?.email || "",
-    photoURL: user?.photoURL || "https://placehold.co/400x400",
+    photoURL: user?.photoURL || "",
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -102,7 +102,7 @@ const SettingsPage = () => {
   const handleUpdateProfile = async (userData: { [k: string]: string }) => {
     try {
       if (user) {
-        await updateUserProfile(user?.uid, userData);
+        await updateUserProfile(userData);
         toast.success("Profile updated successfully");
       }
     } catch (e) {
@@ -170,7 +170,10 @@ const SettingsPage = () => {
                     <Avatar className="h-30 w-30 rounded-lg overflow-hidden">
                       {form.watch("photoURL") && (
                         <AvatarImage
-                          src={form.watch("photoURL")}
+                          src={
+                            form.watch("photoURL") ||
+                            "https://placehold.co/400x400"
+                          }
                           alt={user?.displayName || "user avatar"}
                           className="w-full h-full object-cover"
                         />

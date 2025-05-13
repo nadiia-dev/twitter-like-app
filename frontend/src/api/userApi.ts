@@ -6,6 +6,7 @@ import {
   reauthenticateWithPopup,
   sendEmailVerification,
   sendPasswordResetEmail,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -20,12 +21,11 @@ export const registerUserAPI = async (userData: {
   password: string;
 }) => {
   try {
-    await instance.post("/users/signup", userData);
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      userData.email,
-      userData.password
-    );
+    const res = await instance.post("/users/signup", userData);
+
+    const token = res.data.token;
+
+    const userCredential = await signInWithCustomToken(auth, token);
 
     const user = userCredential.user;
 
@@ -130,12 +130,11 @@ export const deleteUserAPI = async () => {
   }
 };
 
-export const updateUserProfileAPI = async (
-  id: string,
-  userData: { [k: string]: string }
-) => {
+export const updateUserProfileAPI = async (userData: {
+  [k: string]: string;
+}) => {
   try {
-    const res = await instance.put(`/users/${id}`, userData);
+    const res = await instance.put(`/users`, userData);
     if (res) {
       return res.data;
     }
@@ -146,7 +145,7 @@ export const updateUserProfileAPI = async (
   }
 };
 
-export const getUserAPI = async (id: string) => {
+export const getUserAPI = async (id?: string) => {
   try {
     const res = await instance.get(`/users/${id}`);
     return res.data;

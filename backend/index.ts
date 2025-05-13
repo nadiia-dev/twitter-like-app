@@ -17,7 +17,8 @@ const createFunction = async (expressInstance: Express): Promise<void> => {
     new ExpressAdapter(expressInstance),
   );
   app.enableCors({
-    origin: 'https://dependable-star-458507-a6.web.app',
+    // origin: 'https://dependable-star-458507-a6.web.app',
+    origin: 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

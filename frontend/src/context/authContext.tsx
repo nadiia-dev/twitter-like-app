@@ -28,10 +28,9 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<User | undefined>;
   logoutUser: () => Promise<void>;
   deleteProfile: () => Promise<void>;
-  updateUserProfile: (
-    id: string,
-    userData: { [k: string]: string }
-  ) => Promise<User | undefined>;
+  updateUserProfile: (userData: {
+    [k: string]: string;
+  }) => Promise<User | undefined>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -138,13 +137,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const updateUserProfile = async (
-    id: string,
-    userData: { [k: string]: string }
-  ) => {
+  const updateUserProfile = async (userData: { [k: string]: string }) => {
     setLoading(true);
     try {
-      const user = await updateUserProfileAPI(id, userData);
+      const user = await updateUserProfileAPI(userData);
       if (user) {
         setUser(user);
         return user;

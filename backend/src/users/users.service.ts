@@ -11,7 +11,7 @@ export class UsersService {
 
   async createUser(
     user: CreateUserDto,
-  ): Promise<{ uid: string; email: string } | undefined> {
+  ): Promise<{ token: string } | undefined> {
     const { name, email, password } = user;
     const service = this.firebaseService.getAdmin();
     const firestore = this.firebaseService.getFirestore();
@@ -31,6 +31,7 @@ export class UsersService {
         email,
         password,
       });
+      const token = await service.auth().createCustomToken(createdAuth.uid);
 
       const uid = createdAuth.uid;
 
@@ -40,7 +41,7 @@ export class UsersService {
         createdAt: admin.firestore.Timestamp.now(),
       });
 
-      return { uid, email };
+      return { token };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
