@@ -23,8 +23,11 @@ const useToggleDislike = ({
     onError: () => {
       setDisliked((prev) => !prev);
     },
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["postById", postId] }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["postById", postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["postsByUser", userId] });
+    },
   });
 
   const toggleDislike = () => {

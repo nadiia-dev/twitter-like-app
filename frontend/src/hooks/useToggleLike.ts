@@ -23,8 +23,11 @@ const useToggleLike = ({
     onError: () => {
       setLiked((prev) => !prev);
     },
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["postById", postId] }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["postById", postId] });
+      queryClient.invalidateQueries({ queryKey: ["postsByUser", userId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
   });
 
   const toggleLike = () => {

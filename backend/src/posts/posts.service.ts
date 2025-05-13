@@ -17,17 +17,13 @@ export class PostsService {
   constructor(private readonly firebaseService: FirebaseService) {}
 
   async getAllPosts(
-    sortParam: string,
-    limit: number,
+    sortBy: string,
+    limit: string,
     lastValue?: number,
     lastCreated?: string,
   ): Promise<Post[] | undefined> {
     const firestore = this.firebaseService.getFirestore();
     const postsRef = firestore.collection('posts');
-    const allowedSortFields = ['likesCount', 'commentsCount'];
-    const sortBy = allowedSortFields.includes(sortParam)
-      ? sortParam
-      : 'likesCount';
     const pageSize = Number(limit) || 10;
 
     try {
