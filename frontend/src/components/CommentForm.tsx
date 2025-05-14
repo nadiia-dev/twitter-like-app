@@ -39,8 +39,10 @@ const CommentForm = ({
       postId: string;
       commentData: CommentData;
     }) => createCommentAPI({ postId, commentData }),
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["postById", postId] }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["postById", postId] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
   });
 
   const onSubmit = (values: z.infer<typeof validationSchema>) => {

@@ -16,14 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
-import {
-  ChevronUp,
-  Home,
-  Origami,
-  Search,
-  Settings,
-  User2,
-} from "lucide-react";
+import { ChevronUp, Home, Origami, Settings, User2 } from "lucide-react";
 import { useAuth } from "@/context/authContext";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
